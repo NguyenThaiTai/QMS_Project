@@ -1,0 +1,12 @@
+# Visual Studio rác
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.ipch
+*.pch
+*.db
+*.opendb
+*.sdf
+*.user
