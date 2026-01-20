@@ -3,8 +3,9 @@
 #include "afxdialogex.h"
 #include <gdiplus.h>
 #include "resource.h" 
+#include "ButtonUI.h"
 
-class CKioskGetNumbersAppDlg;
+class CButtonUI;
 class AuthFingerDlg : public CDialogEx
 {
     DECLARE_DYNAMIC(AuthFingerDlg)
@@ -28,21 +29,20 @@ protected:
     afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor); // add set text color NTTai 20251231 
     afx_msg void OnTimer(UINT_PTR nIDEvent); // add set date-time NTTai 20250106
     afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-    afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+    afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
     DECLARE_MESSAGE_MAP()
 
 private:
-    // --- 5 DRAWING MODULES (Mô-đun vẽ giao diện) ---
-    void DrawInstructions(Gdiplus::Graphics& g, int cx, int cy); // 1. Vẽ chữ hướng dẫn
-    void DrawPulseCircle(Gdiplus::Graphics& g, int cx, int cy);  // 2. Vẽ vòng tròn tỏa sáng
-    void DrawMainCircle(Gdiplus::Graphics& g, int cx, int cy);   // 3. Vẽ vòng tròn trắng
-    void DrawFingerIcon(Gdiplus::Graphics& g, int cx, int cy);   // 4. Vẽ icon vân tay
-    void DrawStatusLabel(Gdiplus::Graphics& g, int cx, int cy);  // 5. Vẽ nhãn trạng thái bo góc
-    void DrawCancelButton(Gdiplus::Graphics& g, int cx, int cy);
+    // --- 5 DRAWING MODULES
+    void DrawInstructions(Gdiplus::Graphics& g, int cx, int cy); 
+    void DrawPulseCircle(Gdiplus::Graphics& g, int cx, int cy); 
+    void DrawMainCircle(Gdiplus::Graphics& g, int cx, int cy);
+    void DrawFingerIcon(Gdiplus::Graphics& g, int cx, int cy);
+    void DrawStatusLabel(Gdiplus::Graphics& g, int cx, int cy);
+    
 
     // --- PRIVATE HELPER FUNCTIONS (Hàm tiện ích nội bộ) ---
     Gdiplus::Image* LoadPNGFromResource(UINT nIDResource);
-    void AddRoundedRectToPath(Gdiplus::GraphicsPath& path, Gdiplus::RectF rect, float radius);
 
     // --- ANIMATION STATE ---
     float m_fPulseAlpha;   // Độ trong suốt (0-255)

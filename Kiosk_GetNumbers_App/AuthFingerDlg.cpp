@@ -1,8 +1,9 @@
 ﻿#include "pch.h"
 #include "AuthFingerDlg.h"
-#include "Kiosk_GetNumbers_AppDlg.h"
+//#include "Kiosk_GetNumbers_AppDlg.h"
 #include "HeaderUI.h"
 #include <iostream>
+
 
 IMPLEMENT_DYNAMIC(AuthFingerDlg, CDialogEx)
 
@@ -11,7 +12,7 @@ BEGIN_MESSAGE_MAP(AuthFingerDlg, CDialogEx)
 	ON_WM_CTLCOLOR() // add set text color NTTai 20251231
 	ON_WM_TIMER() // add display date-time NTTai 20260106
 	ON_WM_ERASEBKGND()
-	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 // add start prevent background erase flickering NTTai 20260106
@@ -63,10 +64,11 @@ BOOL AuthFingerDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	// 1. Setup Fonts
-	m_fontTitle.CreatePointFont(280, _T("Arial Bold")); // Size 28
-	m_fontSub.CreatePointFont(120, _T("Arial"));        // Size 12
+	// add start set font NTTai 20260107
+	m_fontTitle.CreatePointFont(280, _T("Arial Bold"));
+	m_fontSub.CreatePointFont(120, _T("Arial"));
 	m_fontStatus.CreatePointFont(110, _T("Arial Bold"));
+	// add end set font NTTai 20260107
 
 	m_pIconFinger = LoadPNGFromResource(IDB_PNG_FINGER); // add load finger icon NTTai 20260106
 
@@ -102,7 +104,7 @@ void AuthFingerDlg::OnPaint()
 	// add end setup GDI+ Graphics object linked to the Memory DC  NTTai 20260106
 
 	// add start clear background NTTai 20260106
-	g.Clear(Gdiplus::Color(255, 246, 246, 248)); // Light gray background
+	g.Clear(Gdiplus::Color(255, 235, 235, 235));
 	// add end clear background NTTai 20260106
 	
 	// add start draw UI components to the memory buffer NTTai 20260106
@@ -114,7 +116,7 @@ void AuthFingerDlg::OnPaint()
 	DrawMainCircle(g, cx, cy);
 	DrawFingerIcon(g, cx, cy);
 	DrawStatusLabel(g, cx, cy);
-	DrawCancelButton(g, cx, cy);
+	CButtonUI::DrawCancelButton(g, cx, cy, m_rectCancelBtn);
 	// add end draw UI components to the memory buffer NTTai 20260106
 
 	// add start copy the entire buffer to the screen in one atomic operation NTTai 20260106
@@ -158,7 +160,8 @@ void AuthFingerDlg::OnTimer(UINT_PTR nIDEvent)
 			m_fPulseAlpha -= step;
 			if (m_fPulseAlpha <= 20.0f) m_bPulseGrowing = true;
 		}
-		CRect rect; GetClientRect(&rect);
+		CRect rect; 
+		GetClientRect(&rect);
 		int cx = rect.Width() / 2;
 		int cy = rect.Height() / 2 + 80;
 		CRect rInvalid(cx - 180, cy - 180, cx + 180, cy + 180);
@@ -201,17 +204,7 @@ Gdiplus::Image* AuthFingerDlg::LoadPNGFromResource(UINT nIDResource)
 	return pFinalImg;
 }
 
-// add start create rounded rectangle path NTTai 20260106
-void AuthFingerDlg::AddRoundedRectToPath(Gdiplus::GraphicsPath& path, Gdiplus::RectF rect, float radius)
-{
-	float d = radius * 2.0f;
-	path.AddArc(rect.X, rect.Y, d, d, 180, 90); // Góc trên trái
-	path.AddArc(rect.X + rect.Width - d, rect.Y, d, d, 270, 90); // Góc trên phải
-	path.AddArc(rect.X + rect.Width - d, rect.Y + rect.Height - d, d, d, 0, 90); // Góc dưới phải
-	path.AddArc(rect.X, rect.Y + rect.Height - d, d, d, 90, 90); // Góc dưới trái
-	path.CloseFigure();
-}
-// add end create rounded rectangle path NTTai 20260106
+
 
 // add start draw instruction title NTTai 20260106
 void AuthFingerDlg::DrawInstructions(Gdiplus::Graphics& g, int cx, int cy)
@@ -296,7 +289,7 @@ void AuthFingerDlg::DrawStatusLabel(Gdiplus::Graphics& g, int cx, int cy)
 {
 	Gdiplus::RectF rectLabel((float)cx - 220, (float)cy + 180, 440.0f, 60.0f);
 	Gdiplus::GraphicsPath path;
-	AddRoundedRectToPath(path, rectLabel, 30.0f);
+	CButtonUI::AddRoundedRectToPath(path, rectLabel, 30.0f);
 
 	g.FillPath(&Gdiplus::SolidBrush(Gdiplus::Color::White), &path);
 
@@ -310,41 +303,15 @@ void AuthFingerDlg::DrawStatusLabel(Gdiplus::Graphics& g, int cx, int cy)
 }
 // add end draw status label NTTai 20260106
 
-// add start draw cancel button with Agribank theme NTTai 20260106
-void AuthFingerDlg::DrawCancelButton(Gdiplus::Graphics& g, int cx, int cy)
-{
-	float btnWidth = 180.0f;
-	float btnHeight = 54.0f;
-	m_rectCancelBtn = Gdiplus::RectF((float)cx - btnWidth / 2, (float)cy + 320, btnWidth, btnHeight);
-
-	Gdiplus::GraphicsPath path;
-	AddRoundedRectToPath(path, m_rectCancelBtn, 27.0f); 
-
-	Gdiplus::SolidBrush btnBgBrush(Gdiplus::Color(255, 248, 249, 252));
-	g.FillPath(&btnBgBrush, &path);
-
-	Gdiplus::Pen borderPen(Gdiplus::Color(255, 162, 32, 45), 1.5f);
-	g.DrawPath(&borderPen, &path);
-
-	Gdiplus::Font font(L"Segoe UI", 12, Gdiplus::FontStyleBold);
-	Gdiplus::SolidBrush textBrush(Gdiplus::Color(255, 162, 32, 45));
-	Gdiplus::StringFormat format;
-	format.SetAlignment(Gdiplus::StringAlignmentCenter);
-	format.SetLineAlignment(Gdiplus::StringAlignmentCenter);
-
-	std::wstring btnText = L"  ←  Hủy bỏ";
-	g.DrawString(btnText.c_str(), -1, &font, m_rectCancelBtn, &format, &textBrush);
-}
-// add end draw cancel button with Agribank theme NTTai 20260106
 
 // add start handle mouse click on cancel button NTTai 20260106
-void AuthFingerDlg::OnLButtonDown(UINT nFlags, CPoint point)
+void AuthFingerDlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	Gdiplus::PointF mousePt((float)point.x, (float)point.y);
 	if (m_rectCancelBtn.Contains(mousePt))
 	{
 		EndDialog(IDCANCEL);
 	}
-	CDialogEx::OnLButtonDown(nFlags, point);
+	CDialogEx::OnLButtonUp(nFlags, point);
 }
 // add end handle mouse click on cancel button NTTai 20260106

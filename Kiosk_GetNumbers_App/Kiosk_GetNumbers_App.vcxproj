@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -183,27 +183,56 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AuthCorrect.h" />
+    <ClInclude Include="AuthFaceIDDlg.h" />
     <ClInclude Include="AuthFingerDlg.h" />
+    <ClInclude Include="AuthIDCardDlg.h" />
+    <ClInclude Include="AuthQRCodeDlg.h" />
     <ClInclude Include="AuthScreen.h" />
+    <ClInclude Include="ButtonUI.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="DatabaseManager.h" />
+    <ClInclude Include="DisplayNumbersDlg.h" />
+    <ClInclude Include="FakeCCCDReader.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="HeaderUI.h" />
     <ClInclude Include="Kiosk_GetNumbers_App.h" />
     <ClInclude Include="Kiosk_GetNumbers_AppDlg.h" />
+    <ClInclude Include="NoAuthDlg.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="qrcodegen.hpp" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="sqlite3.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AuthCorrect.cpp" />
+    <ClCompile Include="AuthFaceIDDlg.cpp" />
     <ClCompile Include="AuthFingerDlg.cpp" />
+    <ClCompile Include="AuthIDCardDlg.cpp" />
+    <ClCompile Include="AuthQRCodeDlg.cpp" />
     <ClCompile Include="AuthScreen.cpp" />
+    <ClCompile Include="ButtonUI.cpp" />
+    <ClCompile Include="DatabaseManager.cpp" />
+    <ClCompile Include="DisplayNumbersDlg.cpp" />
+    <ClCompile Include="FakeCCCDReader.cpp" />
     <ClCompile Include="HeaderUI.cpp" />
     <ClCompile Include="Kiosk_GetNumbers_App.cpp" />
     <ClCompile Include="Kiosk_GetNumbers_AppDlg.cpp" />
+    <ClCompile Include="NoAuthDlg.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="qrcodegen.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="sqlite3.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -220,6 +249,7 @@
     <Image Include="res\id_card.png" />
     <Image Include="res\Kiosk_GetNumbers_App.ico" />
     <Image Include="res\qr_code.png" />
+    <Image Include="res\settingBtn.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

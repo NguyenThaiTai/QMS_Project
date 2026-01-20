@@ -13,6 +13,14 @@
 #define new DEBUG_NEW
 #endif
 
+// add start define authentication IDs NTTai 20260107
+#define ID_AUTH_IDCARD   2000
+#define ID_AUTH_FINGER   2001
+#define ID_AUTH_FACEID   2002
+#define ID_AUTH_QRCODE   2003
+#define ID_AUTH_NORMAL   2004
+// add end define authentication IDs NTTai 20260107
+
 class CAboutDlg : public CDialogEx
 {
 public:
@@ -31,9 +39,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
-{
-}
+CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX){}
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -41,6 +47,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+
 END_MESSAGE_MAP()
 
 // CKioskGetNumbersAppDlg dialog
@@ -48,6 +55,9 @@ CKioskGetNumbersAppDlg::CKioskGetNumbersAppDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_KIOSK_GETNUMBERS_APP_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_pAuthScreen = nullptr;
+	m_pStaticAgribank = nullptr;
+	m_pStaticDateTime = nullptr;
 }
 
 void CKioskGetNumbersAppDlg::DoDataExchange(CDataExchange* pDX)
@@ -60,11 +70,15 @@ BEGIN_MESSAGE_MAP(CKioskGetNumbersAppDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_WM_CTLCOLOR() // add set text color NTTai 20251231
-	ON_STN_CLICKED(IDC_STATIC_LOGO, &CKioskGetNumbersAppDlg::OnStnClickedStaticLogo)
 	ON_WM_TIMER() // add display date-time NTTai 20260102
 	ON_COMMAND_RANGE(2000, 2004, &CKioskGetNumbersAppDlg::OnButtonAuthClicked) // add click button event NTTai 20260105
 END_MESSAGE_MAP()
 
+// add start prevent background erase flickering NTTai 20260106
+BOOL CKioskGetNumbersAppDlg::OnEraseBkgnd(CDC* pDC) {
+	return TRUE;
+}
+// add end prevent background erase flickering NTTai 20260106
 
 // CKioskGetNumbersAppDlg message handlers
 BOOL CKioskGetNumbersAppDlg::OnInitDialog()
@@ -88,8 +102,6 @@ BOOL CKioskGetNumbersAppDlg::OnInitDialog()
 			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
 		}
 	}
-	SetIcon(m_hIcon, TRUE);			// Set big icon
-	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// add start draw header UI NTTai 20260106
 	CHeaderUI::SetFullScreen(this); // add set full screen NTTai 20260601
@@ -123,38 +135,56 @@ void CKioskGetNumbersAppDlg::OnSysCommand(UINT nID, LPARAM lParam)
 
 void CKioskGetNumbersAppDlg::OnPaint()
 {
-	CPaintDC dc(this);
+	CPaintDC dc(this); // device context for painting
 	CRect rect;
 	GetClientRect(&rect);
+
 	if (IsIconic())
 	{
-		 // device context for painting
 		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
-
-		// Center icon in client rectangle
 		int cxIcon = GetSystemMetrics(SM_CXICON);
 		int cyIcon = GetSystemMetrics(SM_CYICON);
 		int x = (rect.Width() - cxIcon + 1) / 2;
 		int y = (rect.Height() - cyIcon + 1) / 2;
-
-		// Draw the icon
 		dc.DrawIcon(x, y, m_hIcon);
 	}
 	else
 	{
-		CDialogEx::OnPaint();
-		CHeaderUI::DrawSharedHeader(&dc, rect); // add draw header UI NTTai 20260105
+		// [FIX START] Áp dụng Double Buffering để sửa lỗi hiển thị giờ bị chồng hình NTTai 20260112
+
+		// 1. Tạo Memory DC (Vùng vẽ đệm)
+		CDC memDC;
+		memDC.CreateCompatibleDC(&dc);
+		CBitmap bmp;
+		bmp.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
+		CBitmap* pOldBmp = memDC.SelectObject(&bmp);
+
+		// 2. Khởi tạo GDI+ trên Memory DC
+		Gdiplus::Graphics g(memDC.GetSafeHdc());
+		g.SetSmoothingMode(Gdiplus::SmoothingModeHighQuality);
+		g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAliasGridFit);
+
+		// 3. XÓA SẠCH NỀN CŨ (Quan trọng nhất để không bị đè chữ)
+		// Dùng màu xám nhạt đồng bộ với các màn hình khác
+		g.Clear(Gdiplus::Color(255, 235, 235, 235));
+
+		// 4. Vẽ Header (Logo + Đồng hồ) lên Memory DC
+		// Hàm DrawSharedHeader của bạn cần nhận CDC* hoặc Graphics*, 
+		// ở đây code cũ bạn truyền &dc, giờ truyền &memDC để vẽ lên bộ đệm.
+		CHeaderUI::DrawSharedHeader(&memDC, rect);
+
+		// 5. Copy từ Memory DC ra màn hình thật (BitBlt)
+		dc.BitBlt(0, 0, rect.Width(), rect.Height(), &memDC, 0, 0, SRCCOPY);
+
+		// Dọn dẹp
+		memDC.SelectObject(pOldBmp);
+
 	}
 }
 
 HCURSOR CKioskGetNumbersAppDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
-}
-
-void CKioskGetNumbersAppDlg::OnStnClickedStaticLogo()
-{
-	
 }
 
 // add set text color NTTai 20251231
@@ -199,7 +229,7 @@ void CKioskGetNumbersAppDlg::OnTimer(UINT_PTR nIDEvent)
 		CRect rectClient;
 		GetClientRect(&rectClient);
 		CRect rectTime(rectClient.Width() - 400, 140, rectClient.Width(), 210);
-		InvalidateRect(&rectTime, TRUE);
+		InvalidateRect(&rectTime, FALSE);
 	}
 	CDialogEx::OnTimer(nIDEvent);
 }
@@ -208,13 +238,44 @@ void CKioskGetNumbersAppDlg::OnTimer(UINT_PTR nIDEvent)
 // add start handle button click event NTTai 20260105
 void CKioskGetNumbersAppDlg::OnButtonAuthClicked(UINT nID)
 {
-	int nIndex = nID - 2000;
-	if (nIndex == 1)
+	switch (nID)
 	{
-		AuthFingerDlg authFinger_dlg(this);
-		authFinger_dlg.DoModal(); 
-	}
+		case ID_AUTH_FINGER:
+		{
+			AuthFingerDlg authFinger_dlg(this);
+			authFinger_dlg.DoModal();
+			break;
+		}
+			
+		case ID_AUTH_IDCARD:
+		{
+			AuthIDCardDlg authCard_dlg(this);
+			authCard_dlg.DoModal();
+			break;
+		}
+		
+		case ID_AUTH_FACEID:
+		{
+			AuthFaceIDDlg authFace_dlg(this);
+			authFace_dlg.DoModal();
+			break;
+		}
 
-	//if (nIndex == 0) AfxMessageBox(_T("Bạn chọn CCCD"));
+		case ID_AUTH_QRCODE:
+		{
+			AuthQRCodeDlg authQR_dlg(this);
+			authQR_dlg.DoModal();
+			break;
+		}
+
+		case ID_AUTH_NORMAL:
+		{
+			NoAuthDlg authNormal_dlg(this);
+			authNormal_dlg.DoModal();
+			break;
+		}
+		default:
+			break;
+	}
 }
 // add end handle button click event NTTai 20260105
