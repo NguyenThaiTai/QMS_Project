@@ -96,8 +96,11 @@ The final screen displays the issued queue ticket details.
 
 ```ini
 [Server]
-ApiBaseUrl=[http://10.10.1.21:8081](http://10.10.1.21:8081)
+ApiBaseUrl=http://10.10.1.21:8081
 ConnectionTimeout=15000
+
+[Auth]
+ApiKey=AGRIBANK_SECURE_KEY_2026
 
 [Printer]
 PrinterName=XP-80C
