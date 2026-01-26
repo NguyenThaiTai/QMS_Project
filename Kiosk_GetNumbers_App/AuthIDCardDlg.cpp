@@ -377,7 +377,6 @@ void AuthIDCardDlg::OnTimer(UINT_PTR nIDEvent)
 void AuthIDCardDlg::StartScanProcess()
 {
     SetAuthState(STATE_PROCESSING);
-
     AfxBeginThread(ScanThreadProc, this);
 }
 // add end start scan process logic NTTai 20260114
@@ -393,7 +392,6 @@ void AuthIDCardDlg::OnLButtonUp(UINT nFlags, CPoint point)
         Invalidate(FALSE);
         StartScanProcess();
     }
-
     if (m_bDeleteBtnPressed && m_rectDeleteBtn.Contains(p)) {
         m_bDeleteBtnPressed = false; 
         Invalidate(FALSE);
@@ -406,7 +404,6 @@ void AuthIDCardDlg::OnLButtonUp(UINT nFlags, CPoint point)
         }
     }
     if (m_rectCancelBtn.Contains(p)) { EndDialog(IDCANCEL); }
-
     CDialogEx::OnLButtonUp(nFlags, point);
 }
 
@@ -438,6 +435,15 @@ LRESULT AuthIDCardDlg::OnScanComplete(WPARAM wParam, LPARAM lParam)
     if (wParam == 1) {
         CitizenCardData* pData = (CitizenCardData*)lParam;
         if (pData) {
+            // add start validate data before processing NTTai 20260126
+            if (!ValidateCCCD(pData->strIDNumber)) {
+                AfxMessageBox(L"Lỗi: Mã định danh không đúng định dạng chuẩn!");
+                delete pData; 
+                StartScanProcess();
+                return 0;
+            }
+            // add end validate data before processing NTTai 20260126
+
             m_scannedData = *pData;
             DatabaseManager db;
             bool bIsNew = false;
@@ -531,3 +537,19 @@ UINT __cdecl AuthIDCardDlg::ScanThreadProc(LPVOID pParam)
     return 0;
 }
 // add end worker thread for scanning process NTTai 20260114
+
+// add start implementation of CCCD validation logic NTTai 20260126
+bool AuthIDCardDlg::ValidateCCCD(const CString& strCCCD)
+{
+    if (strCCCD.IsEmpty()) return false;
+
+    if (strCCCD.GetLength() != 12) return false;
+
+    for (int i = 0; i < strCCCD.GetLength(); i++) {
+        if (!iswdigit(strCCCD[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+// add end implementation of CCCD validation logic NTTai 20260126

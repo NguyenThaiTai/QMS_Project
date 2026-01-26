@@ -1,38 +1,53 @@
-﻿#pragma once
+﻿// File: NoAuthDlg.h
+#pragma once
 #include "afxdialogex.h"
 #include <gdiplus.h>
 #include "resource.h" 
 #include "ButtonUI.h"
-#include <iostream>
 #include <vector>
-#include <afxinet.h>
-#include "Common.h" // add include shared data structure NTTai 20260114
+#include "Common.h" 
+#include "ApiService.h"
 
-// add start service item structure definition NTTai 20260114
-struct ServiceItem {
-    std::wstring title;
-    std::wstring description;
+// add start include common messages NTTai 20260123
+#include "AppMessages.h"
+// add end include common messages NTTai 20260123
+
+struct ServiceUIItem {
+    ServiceData data;
     Gdiplus::RectF rect;
-    int id;
-    bool isPressed = false;
-
-    // Operator to compare two service items
-    bool operator==(const ServiceItem& other) const {
-        return (id == other.id) && (title == other.title);
-    }
-
-    bool operator!=(const ServiceItem& other) const {
-        return !(*this == other);
-    }
+    bool isPressed;
+    ServiceUIItem() { isPressed = false; }
 };
-// add end service item structure definition NTTai 20260114
+
+struct TicketProcessParam {
+    HWND hWnd;
+    int serviceID;
+    bool isAuthenticated;
+    CitizenCardData authData;
+};
+
+struct TicketProcessResult {
+    bool success;
+    CString ticketNumber;
+    CString errorMessage;
+    int serviceID;
+};
+
+// add start struct for service list thread result NTTai 20260123
+struct ServiceListResult {
+    bool success;
+    std::vector<ServiceData> list;
+};
+// add end struct for service list thread result NTTai 20260123
 
 class NoAuthDlg : public CDialogEx
 {
     DECLARE_DYNAMIC(NoAuthDlg)
+
 public:
     NoAuthDlg(CWnd* pParent = nullptr);
     virtual ~NoAuthDlg();
+    void SetAuthenticatedData(const CitizenCardData& data);
 
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_NO_AUTH_DIALOG };
@@ -45,26 +60,33 @@ protected:
     afx_msg void OnTimer(UINT_PTR nIDEvent);
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
     afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+
+    afx_msg LRESULT OnApiResult(WPARAM wParam, LPARAM lParam);
+
+    // add start handler for async list result NTTai 20260123
+    afx_msg LRESULT OnApiListResult(WPARAM wParam, LPARAM lParam);
+    // add end handler for async list result NTTai 20260123
+
     DECLARE_MESSAGE_MAP()
 
 private:
-    void DrawServiceList(Gdiplus::Graphics& g, int cx, int cy); // add draw service list grid NTTai 20260114
-    void DrawHeaderTitle(Gdiplus::Graphics& g, int cx, int cy); // add draw header title NTTai 20260114
-    void DrawChevron(Gdiplus::Graphics& g, Gdiplus::RectF cardRect); // add draw chevron icon NTTai 20260114
+    void DrawHeaderTitle(Gdiplus::Graphics& g, int cx, int cy);
+    void DrawServiceList(Gdiplus::Graphics& g, int cx, int cy);
+    void DrawChevron(Gdiplus::Graphics& g, Gdiplus::RectF cardRect);
 
-    void FetchServicesFromServer(); // add fetch active services from API NTTai 20260114
-    void ParseJSONAndPopulate(CString strJSON, std::vector<ServiceItem>& outList); // add parse JSON response NTTai 20260114
-    CString DecodeJsonString(CString strRaw); // add decode unicode JSON string NTTai 20260114
-    CString RequestTicketFromServer(int serviceID); // add request ticket for walk-in guest NTTai 20260114
+    void StartTicketProcess(int serviceID);
+    static UINT __cdecl WorkerThreadProc(LPVOID pParam);
 
-    std::vector<ServiceItem> m_services;    
+    // add start async list fetching variables and functions NTTai 20260123
+    void UpdateServiceList();
+    static UINT __cdecl ListFetcherThreadProc(LPVOID pParam);
+    bool m_bIsFetchingList = false;
+    // add end async list fetching variables and functions NTTai 20260123
+
+    std::vector<ServiceUIItem> m_uiItems;
     Gdiplus::RectF m_rectCancelBtn;
-    bool m_bCancelPressed = false;
 
-    CString RequestAuthenticatedTicket(int serviceID); // add request ticket for auth customer NTTai 20260114
-    CitizenCardData m_authData; // add authenticated customer data NTTai 20260114
-    bool m_bIsAuthenticated = false; // add authentication flag NTTai 20260114
-
-public:
-    void SetAuthenticatedData(const CitizenCardData& data); // add set auth data method NTTai 20260114
+    bool m_bIsLoading = false;
+    bool m_bIsAuthenticated = false;
+    CitizenCardData m_authData;
 };

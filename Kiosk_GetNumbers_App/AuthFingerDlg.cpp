@@ -204,8 +204,6 @@ Gdiplus::Image* AuthFingerDlg::LoadPNGFromResource(UINT nIDResource)
 	return pFinalImg;
 }
 
-
-
 // add start draw instruction title NTTai 20260106
 void AuthFingerDlg::DrawInstructions(Gdiplus::Graphics& g, int cx, int cy)
 {
@@ -227,10 +225,8 @@ void AuthFingerDlg::DrawInstructions(Gdiplus::Graphics& g, int cx, int cy)
 // add start draw pulse animation circle NTTai 20260106
 void AuthFingerDlg::DrawPulseCircle(Gdiplus::Graphics& g, int cx, int cy)
 {
-	// Màu đỏ Agribank với độ trong suốt thay đổi (m_fPulseAlpha)
 	Gdiplus::SolidBrush pulseBrush(Gdiplus::Color((int)m_fPulseAlpha, 162, 32, 45));
-
-	int size = 280; // Kích thước vòng tỏa sáng
+	int size = 280; 
 	g.FillEllipse(&pulseBrush, cx - size / 2, cy - size / 2, size, size);
 }
 // add end draw pulse animation circle NTTai 20260106
@@ -241,8 +237,6 @@ void AuthFingerDlg::DrawMainCircle(Gdiplus::Graphics& g, int cx, int cy)
 	int size = 200;
 	Gdiplus::SolidBrush whiteBrush(Gdiplus::Color::White);
 	g.FillEllipse(&whiteBrush, cx - size / 2, cy - size / 2, size, size);
-
-	// Viền đỏ mỏng xung quanh
 	Gdiplus::Pen penBorder(Gdiplus::Color(255, 162, 32, 45), 2.0f);
 	g.DrawEllipse(&penBorder, cx - size / 2, cy - size / 2, size, size);
 }
@@ -278,11 +272,15 @@ void AuthFingerDlg::DrawFingerIcon(Gdiplus::Graphics& g, int cx, int cy)
 
 	for (int i = 0; i < 3; i++) {
 		g.DrawImage(m_pIconFinger,
-			Gdiplus::RectF(x + offsets[i].X, y + offsets[i].Y, iconSize, iconSize),
-			0, 0, (float)m_pIconFinger->GetWidth(), (float)m_pIconFinger->GetHeight(),
-			Gdiplus::UnitPixel, &imAttr);
+					Gdiplus::RectF(x + offsets[i].X, y + offsets[i].Y, iconSize, iconSize),
+					0,
+					0, 
+					(float)m_pIconFinger->GetWidth(), 
+					(float)m_pIconFinger->GetHeight(),
+					Gdiplus::UnitPixel, &imAttr);
 	}
 }
+// add end draw fingerprint icon NTTai 20260106
 
 // add start draw status label NTTai 20260106
 void AuthFingerDlg::DrawStatusLabel(Gdiplus::Graphics& g, int cx, int cy)

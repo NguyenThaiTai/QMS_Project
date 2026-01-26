@@ -50,6 +50,7 @@ private:
     static UINT __cdecl ScanThreadProc(LPVOID pParam);
     void DrawTestButton(Gdiplus::Graphics& g, int cx, int cy);
     void DrawDeleteButton(Gdiplus::Graphics& g, int cx, int cy);
+	bool ValidateCCCD(const CString& strCCCD); // add implementation of CCCD validation logic NTTai 20260126
 
     AuthState m_eCurrentState; // add current state variable NTTai 20260114
     float m_fProgressVal;      // add progress bar value (0.0 -> 100.0) NTTai 20260114

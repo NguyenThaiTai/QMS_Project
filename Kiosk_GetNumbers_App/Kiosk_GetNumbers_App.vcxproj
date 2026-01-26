@@ -183,6 +183,8 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ApiService.h" />
+    <ClInclude Include="AppMessages.h" />
     <ClInclude Include="AuthCorrect.h" />
     <ClInclude Include="AuthFaceIDDlg.h" />
     <ClInclude Include="AuthFingerDlg.h" />
@@ -191,6 +193,7 @@
     <ClInclude Include="AuthScreen.h" />
     <ClInclude Include="ButtonUI.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="ConfigManager.h" />
     <ClInclude Include="DatabaseManager.h" />
     <ClInclude Include="DisplayNumbersDlg.h" />
     <ClInclude Include="FakeCCCDReader.h" />
@@ -206,6 +209,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ApiService.cpp" />
     <ClCompile Include="AuthCorrect.cpp" />
     <ClCompile Include="AuthFaceIDDlg.cpp" />
     <ClCompile Include="AuthFingerDlg.cpp" />
@@ -213,6 +217,7 @@
     <ClCompile Include="AuthQRCodeDlg.cpp" />
     <ClCompile Include="AuthScreen.cpp" />
     <ClCompile Include="ButtonUI.cpp" />
+    <ClCompile Include="ConfigManager.cpp" />
     <ClCompile Include="DatabaseManager.cpp" />
     <ClCompile Include="DisplayNumbersDlg.cpp" />
     <ClCompile Include="FakeCCCDReader.cpp" />

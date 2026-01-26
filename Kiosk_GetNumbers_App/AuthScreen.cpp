@@ -32,11 +32,9 @@ Gdiplus::Image* LoadPNGFromResource(UINT nIDResource)
 
     if (CreateStreamOnHGlobal(hMem, TRUE, &pStream) == S_OK)
     {
-        // Nạp ảnh tạm thời từ Stream
         Gdiplus::Image* pTempImg = Gdiplus::Image::FromStream(pStream);
         if (pTempImg && pTempImg->GetLastStatus() == Gdiplus::Ok)
         {
-            // TẠO BITMAP MỚI VÀ COPY DỮ LIỆU ĐỂ TÁCH KHỎI STREAM [cite: 2026-01-03]
             Gdiplus::Bitmap* pBmp = new Gdiplus::Bitmap(pTempImg->GetWidth(), pTempImg->GetHeight(), PixelFormat32bppARGB);
             Gdiplus::Graphics g(pBmp);
             g.DrawImage(pTempImg, 0, 0, pTempImg->GetWidth(), pTempImg->GetHeight());
