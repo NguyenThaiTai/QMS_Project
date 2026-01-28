@@ -183,61 +183,58 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ApiService.h" />
-    <ClInclude Include="AppMessages.h" />
-    <ClInclude Include="AuthCorrect.h" />
-    <ClInclude Include="AuthFaceIDDlg.h" />
-    <ClInclude Include="AuthFingerDlg.h" />
-    <ClInclude Include="AuthIDCardDlg.h" />
-    <ClInclude Include="AuthQRCodeDlg.h" />
-    <ClInclude Include="AuthScreen.h" />
-    <ClInclude Include="ButtonUI.h" />
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="ConfigManager.h" />
-    <ClInclude Include="DatabaseManager.h" />
-    <ClInclude Include="DisplayNumbersDlg.h" />
-    <ClInclude Include="FakeCCCDReader.h" />
+    <ClInclude Include="API\ApiService.h" />
+    <ClInclude Include="AuthFaceID\AuthFaceIDDlg.h" />
+    <ClInclude Include="AuthFinger_Dialog\AuthFingerDlg.h" />
+    <ClInclude Include="AuthIDCard\AuthCorrect.h" />
+    <ClInclude Include="AuthIDCard_Dialog\AuthIDCardDlg.h" />
+    <ClInclude Include="AuthIDCard_Dialog\FakeCCCDReader.h" />
+    <ClInclude Include="AuthQRCode\AuthQRCodeDlg.h" />
+    <ClInclude Include="AuthQRCode\qrcodegen.hpp" />
+    <ClInclude Include="Common\AppMessages.h" />
+    <ClInclude Include="Common\ButtonUI.h" />
+    <ClInclude Include="Common\Common.h" />
+    <ClInclude Include="Common\HeaderUI.h" />
+    <ClInclude Include="ConfigManagement\ConfigManagement.h" />
+    <ClInclude Include="DatabaseManager\DatabaseManager.h" />
+    <ClInclude Include="DatabaseManager\sqlite3.h" />
+    <ClInclude Include="DisplayNumbers\DisplayNumbersDlg.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="HeaderUI.h" />
     <ClInclude Include="Kiosk_GetNumbers_App.h" />
-    <ClInclude Include="Kiosk_GetNumbers_AppDlg.h" />
-    <ClInclude Include="NoAuthDlg.h" />
+    <ClInclude Include="MainScreen\AuthScreen.h" />
+    <ClInclude Include="MainScreen\Kiosk_GetNumbers_AppDlg.h" />
+    <ClInclude Include="NoAuth\NoAuthDlg.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="qrcodegen.hpp" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="sqlite3.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ApiService.cpp" />
-    <ClCompile Include="AuthCorrect.cpp" />
-    <ClCompile Include="AuthFaceIDDlg.cpp" />
-    <ClCompile Include="AuthFingerDlg.cpp" />
-    <ClCompile Include="AuthIDCardDlg.cpp" />
-    <ClCompile Include="AuthQRCodeDlg.cpp" />
-    <ClCompile Include="AuthScreen.cpp" />
-    <ClCompile Include="ButtonUI.cpp" />
-    <ClCompile Include="ConfigManager.cpp" />
-    <ClCompile Include="DatabaseManager.cpp" />
-    <ClCompile Include="DisplayNumbersDlg.cpp" />
-    <ClCompile Include="FakeCCCDReader.cpp" />
-    <ClCompile Include="HeaderUI.cpp" />
+    <ClCompile Include="API\ApiService.cpp" />
+    <ClCompile Include="AuthFaceID\AuthFaceIDDlg.cpp" />
+    <ClCompile Include="AuthFinger\AuthFingerDlg.cpp" />
+    <ClCompile Include="AuthIDCard\AuthCorrect.cpp" />
+    <ClCompile Include="AuthIDCard\AuthIDCardDlg.cpp" />
+    <ClCompile Include="AuthIDCard\FakeCCCDReader.cpp" />
+    <ClCompile Include="AuthQRCode\AuthQRCodeDlg.cpp" />
+    <ClCompile Include="AuthQRCode\qrcodegen.cpp" />
+    <ClCompile Include="Common\ButtonUI.cpp" />
+    <ClCompile Include="Common\HeaderUI.cpp" />
+    <ClCompile Include="ConfigManagement\ConfigManagement.cpp" />
+    <ClCompile Include="DatabaseManager\DatabaseManager.cpp" />
+    <ClCompile Include="DatabaseManager\sqlite3.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="DisplayNumbers\DisplayNumbersDlg.cpp" />
     <ClCompile Include="Kiosk_GetNumbers_App.cpp" />
-    <ClCompile Include="Kiosk_GetNumbers_AppDlg.cpp" />
-    <ClCompile Include="NoAuthDlg.cpp" />
+    <ClCompile Include="MainScreen\AuthScreen.cpp" />
+    <ClCompile Include="MainScreen\Kiosk_GetNumbers_AppDlg.cpp" />
+    <ClCompile Include="NoAuth\NoAuthDlg.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="qrcodegen.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="sqlite3.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

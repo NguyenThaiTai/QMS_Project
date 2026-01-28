@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "sqlite3.h"
-#include "Common.h" // add include shared data structure NTTai 20260114
+#include "../Common/Common.h" // add include shared data structure NTTai 20260114
 #include <string>
 
 class DatabaseManager

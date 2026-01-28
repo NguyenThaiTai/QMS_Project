@@ -1,9 +1,9 @@
 #pragma once
 #include "afxdialogex.h"
 #include <gdiplus.h>
-#include "resource.h" 
-#include "ButtonUI.h"
-#include "HeaderUI.h"
+#include "../resource.h" 
+#include "../Common/ButtonUI.h"
+#include "../Common/HeaderUI.h"
 
 class DisplayNumbersDlg : public CDialogEx
 {

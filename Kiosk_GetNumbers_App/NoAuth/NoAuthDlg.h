@@ -2,15 +2,15 @@
 #pragma once
 #include "afxdialogex.h"
 #include <gdiplus.h>
-#include "resource.h" 
-#include "ButtonUI.h"
 #include <vector>
-#include "Common.h" 
-#include "ApiService.h"
-
-// add start include common messages NTTai 20260123
-#include "AppMessages.h"
-// add end include common messages NTTai 20260123
+#include "../resource.h" 
+#include "../Common/ButtonUI.h"
+#include "../Common/Common.h" 
+#include "../Common/HeaderUI.h"
+#include "../Common/AppMessages.h"
+#include "../API/ApiService.h"
+#include "../DisplayNumbers/DisplayNumbersDlg.h"
+#include "../MainScreen/AuthScreen.h"
 
 struct ServiceUIItem {
     ServiceData data;
@@ -89,4 +89,6 @@ private:
     bool m_bIsLoading = false;
     bool m_bIsAuthenticated = false;
     CitizenCardData m_authData;
+
+	ApiService *m_pApiService;
 };

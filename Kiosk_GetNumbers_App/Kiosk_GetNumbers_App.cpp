@@ -5,7 +5,7 @@
 #include "pch.h"
 #include "framework.h"
 #include "Kiosk_GetNumbers_App.h"
-#include "Kiosk_GetNumbers_AppDlg.h"
+#include "MainScreen/Kiosk_GetNumbers_AppDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

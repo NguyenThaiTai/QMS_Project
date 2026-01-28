@@ -1,7 +1,7 @@
 ﻿// SharedUI.h
 #pragma once
 #include <gdiplus.h>
-#include "resource.h"
+#include "../resource.h"
 
 class CHeaderUI
 {

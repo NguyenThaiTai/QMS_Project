@@ -1,7 +1,7 @@
 ﻿// File: AuthCorrect.cpp
 #include "pch.h"
 #include "AuthCorrect.h"
-#include "NoAuthDlg.h"
+#include "../NoAuth/NoAuthDlg.h"
 
 IMPLEMENT_DYNAMIC(AuthCorrect, CDialogEx)
 

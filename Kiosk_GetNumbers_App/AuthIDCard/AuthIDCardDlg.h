@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include "afxdialogex.h"
 #include <gdiplus.h>
-#include "resource.h" 
-#include "ButtonUI.h"
-#include "HeaderUI.h"
-#include "Common.h" // add include shared data structure NTTai 20260114
+#include "../resource.h" 
+#include "../Common/ButtonUI.h"
+#include "../Common/HeaderUI.h"
+#include "../Common/Common.h" // add include shared data structure NTTai 20260114
 
 #define WM_USER_SCAN_COMPLETE (WM_USER + 100)
 

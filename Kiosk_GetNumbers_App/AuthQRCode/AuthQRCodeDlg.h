@@ -2,10 +2,14 @@
 #pragma once
 #include "afxdialogex.h"
 #include <gdiplus.h>
-#include "resource.h" 
-#include "ButtonUI.h"
-#include "ApiService.h" // add include api service NTTai 20260123
-#include "AppMessages.h" // add include common messages NTTai 20260123
+#include "../resource.h" 
+#include "../Common/ButtonUI.h"
+#include "../API/ApiService.h" // add include api service NTTai 20260123
+#include "../Common/AppMessages.h" // add include common messages NTTai 20260123
+#include "../Common/HeaderUI.h"
+#include "qrcodegen.hpp"
+
+using qrcodegen::QrCode;
 
 // add start struct for QR thread result NTTai 20260123
 struct QrThreadResult {

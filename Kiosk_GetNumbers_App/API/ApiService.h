@@ -3,7 +3,8 @@
 #include <afxinet.h>
 #include <vector>
 #include <string>
-#include "Common.h"
+#include "../Common/Common.h"
+#include "../ConfigManagement/ConfigManagement.h"
 
 struct ApiResponse {
     bool success;
@@ -13,17 +14,10 @@ struct ApiResponse {
 
 class ApiService
 {
-public:
-    static ApiService& GetInstance();
-    // add start API methods declarations NTTai 20260123
-    bool FetchActiveServices(std::vector<ServiceData>& outList);
-    ApiResponse IssueTicket(int serviceID, const CitizenCardData* pAuthData = nullptr);
-    CString GetNewQRCodeUrl();
-    // add end API methods declarations NTTai 20260123
-
 private:
     ApiService();
     ~ApiService();
+    static ApiService *instance;
 
     ApiService(const ApiService&) = delete;
     void operator=(const ApiService&) = delete;
@@ -42,6 +36,14 @@ private:
     CString MapDateToAPI(CString strDate);
     // add end helper functions declarations NTTai 20260123
 
+public:
+    static ApiService* GetInstance();
+
+    // add start API methods declarations NTTai 20260123
+    bool FetchActiveServices(std::vector<ServiceData>& outList);
+    ApiResponse IssueTicket(int serviceID, const CitizenCardData* pAuthData = nullptr);
+    CString GetNewQRCodeUrl();
+    // add end API methods declarations NTTai 20260123
 protected:
 	CString ReadApiBaseUrl();
 };

@@ -1,10 +1,6 @@
 ﻿// File: NoAuthDlg.cpp
 #include "pch.h"
 #include "NoAuthDlg.h"
-#include "HeaderUI.h"
-#include "DisplayNumbersDlg.h"
-#include "AuthScreen.h"
-#include "resource.h"
 
 IMPLEMENT_DYNAMIC(NoAuthDlg, CDialogEx)
 
@@ -51,7 +47,6 @@ void NoAuthDlg::UpdateServiceList()
     m_bIsFetchingList = true;
     AfxBeginThread(ListFetcherThreadProc, this->GetSafeHwnd());
 }
-
 UINT __cdecl NoAuthDlg::ListFetcherThreadProc(LPVOID pParam)
 {
     HWND hWnd = (HWND)pParam;
@@ -59,9 +54,9 @@ UINT __cdecl NoAuthDlg::ListFetcherThreadProc(LPVOID pParam)
 
     ServiceListResult* pResult = new ServiceListResult();
     pResult->success = false;
-
+    
     // Call ApiService to get list (Thread-safe)
-    if (ApiService::GetInstance().FetchActiveServices(pResult->list)) {
+    if (ApiService::GetInstance()->FetchActiveServices(pResult->list)) {
         pResult->success = true;
     }
 
@@ -273,7 +268,7 @@ UINT __cdecl NoAuthDlg::WorkerThreadProc(LPVOID pParam)
     TicketProcessResult* pResult = new TicketProcessResult();
     pResult->serviceID = pInput->serviceID;
 
-    ApiResponse response = ApiService::GetInstance().IssueTicket(pInput->serviceID, pInput->isAuthenticated ? &pInput->authData : nullptr);
+    ApiResponse response = ApiService::GetInstance()->IssueTicket(pInput->serviceID, pInput->isAuthenticated ? &pInput->authData : nullptr);
 
     pResult->success = response.success;
     if (response.success) pResult->ticketNumber = response.data;

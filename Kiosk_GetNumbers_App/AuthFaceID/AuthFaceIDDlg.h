@@ -2,8 +2,9 @@
 #pragma once
 #include "afxdialogex.h"
 #include <gdiplus.h>
-#include "resource.h" 
-#include "ButtonUI.h"
+#include "../resource.h"
+#include "../Common/ButtonUI.h"
+#include "../Common/HeaderUI.h"
 
 class AuthFaceIDDlg : public CDialogEx
 {

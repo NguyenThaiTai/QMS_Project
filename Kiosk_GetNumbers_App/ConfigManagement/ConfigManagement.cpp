@@ -1,6 +1,6 @@
 ﻿// ConfigManager.cpp
 #include "pch.h"
-#include "ConfigManager.h"
+#include "ConfigManagement.h"
 
 ConfigManager::ConfigManager()
 {

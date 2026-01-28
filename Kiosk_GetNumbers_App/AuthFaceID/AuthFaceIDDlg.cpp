@@ -1,7 +1,7 @@
 ﻿// AuthFaceIDDlg.cpp
 #include "pch.h"
 #include "AuthFaceIDDlg.h"
-#include "HeaderUI.h"
+
 
 IMPLEMENT_DYNAMIC(AuthFaceIDDlg, CDialogEx)
 

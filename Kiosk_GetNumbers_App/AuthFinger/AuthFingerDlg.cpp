@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "AuthFingerDlg.h"
 //#include "Kiosk_GetNumbers_AppDlg.h"
-#include "HeaderUI.h"
-#include <iostream>
+
+
 
 
 IMPLEMENT_DYNAMIC(AuthFingerDlg, CDialogEx)

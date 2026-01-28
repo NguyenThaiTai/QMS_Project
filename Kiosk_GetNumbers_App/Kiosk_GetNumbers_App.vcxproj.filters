@@ -18,9 +18,6 @@
     <ClInclude Include="Kiosk_GetNumbers_App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Kiosk_GetNumbers_AppDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -33,58 +30,61 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AuthScreen.h">
+    <ClInclude Include="AuthFinger_Dialog\AuthFingerDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AuthFingerDlg.h">
+    <ClInclude Include="DatabaseManager\DatabaseManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HeaderUI.h">
+    <ClInclude Include="DatabaseManager\sqlite3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ButtonUI.h">
+    <ClInclude Include="Common\Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AuthIDCardDlg.h">
+    <ClInclude Include="AuthIDCard_Dialog\AuthIDCardDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AuthFaceIDDlg.h">
+    <ClInclude Include="AuthIDCard_Dialog\FakeCCCDReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AuthQRCodeDlg.h">
+    <ClInclude Include="AuthIDCard\AuthCorrect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NoAuthDlg.h">
+    <ClInclude Include="AuthFaceID\AuthFaceIDDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="qrcodegen.hpp">
+    <ClInclude Include="AuthQRCode\AuthQRCodeDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DisplayNumbersDlg.h">
+    <ClInclude Include="AuthQRCode\qrcodegen.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FakeCCCDReader.h">
+    <ClInclude Include="Common\ButtonUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DatabaseManager.h">
+    <ClInclude Include="Common\HeaderUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sqlite3.h">
+    <ClInclude Include="DisplayNumbers\DisplayNumbersDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AuthCorrect.h">
+    <ClInclude Include="Common\AppMessages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Common.h">
+    <ClInclude Include="ConfigManagement\ConfigManagement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ConfigManager.h">
+    <ClInclude Include="MainScreen\AuthScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ApiService.h">
+    <ClInclude Include="MainScreen\Kiosk_GetNumbers_AppDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AppMessages.h">
+    <ClInclude Include="API\ApiService.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NoAuth\NoAuthDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -92,58 +92,58 @@
     <ClCompile Include="Kiosk_GetNumbers_App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Kiosk_GetNumbers_AppDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AuthScreen.cpp">
+    <ClCompile Include="DatabaseManager\DatabaseManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AuthFingerDlg.cpp">
+    <ClCompile Include="DatabaseManager\sqlite3.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HeaderUI.cpp">
+    <ClCompile Include="AuthIDCard\AuthIDCardDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ButtonUI.cpp">
+    <ClCompile Include="AuthIDCard\FakeCCCDReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AuthIDCardDlg.cpp">
+    <ClCompile Include="AuthIDCard\AuthCorrect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AuthFaceIDDlg.cpp">
+    <ClCompile Include="AuthFinger\AuthFingerDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AuthQRCodeDlg.cpp">
+    <ClCompile Include="AuthFaceID\AuthFaceIDDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NoAuthDlg.cpp">
+    <ClCompile Include="AuthQRCode\AuthQRCodeDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qrcodegen.cpp">
+    <ClCompile Include="AuthQRCode\qrcodegen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DisplayNumbersDlg.cpp">
+    <ClCompile Include="Common\ButtonUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FakeCCCDReader.cpp">
+    <ClCompile Include="Common\HeaderUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DatabaseManager.cpp">
+    <ClCompile Include="DisplayNumbers\DisplayNumbersDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sqlite3.c">
+    <ClCompile Include="ConfigManagement\ConfigManagement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AuthCorrect.cpp">
+    <ClCompile Include="MainScreen\AuthScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ConfigManager.cpp">
+    <ClCompile Include="MainScreen\Kiosk_GetNumbers_AppDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ApiService.cpp">
+    <ClCompile Include="API\ApiService.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NoAuth\NoAuthDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

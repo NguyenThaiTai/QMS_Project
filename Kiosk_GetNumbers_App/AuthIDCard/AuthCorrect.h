@@ -2,10 +2,10 @@
 #pragma once
 #include "afxdialogex.h"
 #include <gdiplus.h>
-#include "resource.h" 
-#include "ButtonUI.h"
-#include "HeaderUI.h"
-#include "Common.h"
+#include "../resource.h" 
+#include "../Common/ButtonUI.h"
+#include "../Common/HeaderUI.h"
+#include "../Common/Common.h"
 
 class AuthCorrect : public CDialogEx
 {

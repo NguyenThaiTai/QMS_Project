@@ -1,7 +1,7 @@
 ﻿// File: ApiService.cpp
 #include "pch.h"
 #include "ApiService.h"
-#include "ConfigManager.h"
+
 // add start include library for path handling NTTai 20260123
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
@@ -24,11 +24,14 @@ CString ApiService::ReadApiBaseUrl() {
 ApiService::ApiService() {}
 ApiService::~ApiService() {}
 
-ApiService& ApiService::GetInstance() {
-    static ApiService instance;
+ApiService* ApiService::instance = nullptr;
+ApiService* ApiService::GetInstance()
+{
+    if (instance == nullptr) {
+        instance = new ApiService();
+    }
     return instance;
 }
-
 // add start logic to fetch active services (GET) NTTai 20260123
 bool ApiService::FetchActiveServices(std::vector<ServiceData>& outList) {
     outList.clear();

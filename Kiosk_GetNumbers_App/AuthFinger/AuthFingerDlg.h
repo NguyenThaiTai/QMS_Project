@@ -2,8 +2,10 @@
 #pragma once
 #include "afxdialogex.h"
 #include <gdiplus.h>
-#include "resource.h" 
-#include "ButtonUI.h"
+#include "../resource.h"
+#include "../Common/ButtonUI.h"
+#include "../Common/HeaderUI.h"
+#include <iostream>
 
 class CButtonUI;
 class AuthFingerDlg : public CDialogEx
@@ -40,13 +42,10 @@ private:
     void DrawFingerIcon(Gdiplus::Graphics& g, int cx, int cy);
     void DrawStatusLabel(Gdiplus::Graphics& g, int cx, int cy);
     
-
-    // --- PRIVATE HELPER FUNCTIONS (Hàm tiện ích nội bộ) ---
     Gdiplus::Image* LoadPNGFromResource(UINT nIDResource);
 
-    // --- ANIMATION STATE ---
-    float m_fPulseAlpha;   // Độ trong suốt (0-255)
-    bool  m_bPulseGrowing; // Trạng thái đang to ra hay nhỏ lại
+    float m_fPulseAlpha;
+    bool  m_bPulseGrowing;
 
 	// add start member variable NTTai 20260106
 	AuthFingerDlg* m_pAuthFingerDlg;

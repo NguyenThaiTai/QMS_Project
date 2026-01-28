@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <vector>
 #include <atlimage.h>
-#include "resource.h"
+#include "../resource.h"
 #include <gdiplus.h>
 #pragma comment(lib, "gdiplus.lib")
 using namespace Gdiplus;

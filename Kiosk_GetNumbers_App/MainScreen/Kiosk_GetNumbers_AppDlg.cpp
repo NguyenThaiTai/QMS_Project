@@ -1,10 +1,17 @@
 ﻿// Kiosk_GetNumbers_AppDlg.cpp : implementation file
 #include "pch.h"
-#include "framework.h"
-#include "Kiosk_GetNumbers_App.h"
+#include "../framework.h"
+#include "../Kiosk_GetNumbers_App.h"
 #include "Kiosk_GetNumbers_AppDlg.h"
 #include "afxdialogex.h"
-#include "HeaderUI.h" 
+#include "../Common/HeaderUI.h" 
+// add start include authentication dialog headers NTTai 20260123
+#include "../AuthFinger/AuthFingerDlg.h"
+#include "../AuthIDCard/AuthIDCardDlg.h"
+#include "../AuthFaceID/AuthFaceIDDlg.h" 
+#include "../AuthQRCode/AuthQRCodeDlg.h"
+#include "../NoAuth/NoAuthDlg.h"     
+// add end include authentication dialog headers NTTai 20260123
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -1,11 +1,7 @@
 ﻿// File: AuthQRCodeDlg.cpp
 #include "pch.h"
 #include "AuthQRCodeDlg.h"
-#include "HeaderUI.h"
-#include "qrcodegen.hpp"
 #include <afxinet.h>
-
-using qrcodegen::QrCode;
 
 IMPLEMENT_DYNAMIC(AuthQRCodeDlg, CDialogEx)
 
@@ -63,7 +59,7 @@ UINT __cdecl AuthQRCodeDlg::QrFetcherThreadProc(LPVOID pParam)
     QrThreadResult* pResult = new QrThreadResult();
     pResult->success = false;
 
-    CString url = ApiService::GetInstance().GetNewQRCodeUrl();
+    CString url = ApiService::GetInstance()->GetNewQRCodeUrl();
 
     if (!url.IsEmpty()) {
         pResult->success = true;
@@ -99,8 +95,10 @@ void AuthQRCodeDlg::OnPaint()
     CPaintDC dc(this);
     CRect rect; GetClientRect(&rect);
 
-    CDC memDC; memDC.CreateCompatibleDC(&dc);
-    CBitmap bmp; bmp.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
+    CDC memDC;
+    memDC.CreateCompatibleDC(&dc);
+    CBitmap bmp; 
+    bmp.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
     CBitmap* pOldBmp = memDC.SelectObject(&bmp);
     Gdiplus::Graphics g(memDC.GetSafeHdc());
     g.SetSmoothingMode(Gdiplus::SmoothingModeHighQuality);
@@ -233,7 +231,8 @@ void AuthQRCodeDlg::DrawStatusBox(Gdiplus::Graphics& g, int cx, int cy)
     Gdiplus::SolidBrush blackBrush(Gdiplus::Color(255, 30, 30, 30));
     g.DrawString(L"Sử dụng camera để quét mã và thực hiện giao dịch", -1, &fontBold, Gdiplus::PointF((float)cx, (float)cy + 225), &format, &blackBrush);
 
-    wchar_t szBuf[64]; swprintf_s(szBuf, L"Mã QR sẽ tự động làm mới sau %ds", m_nCountdown);
+    wchar_t szBuf[64]; 
+    swprintf_s(szBuf, L"Mã QR sẽ tự động làm mới sau %ds", m_nCountdown);
     Gdiplus::Font fontReg(L"Segoe UI", 11, Gdiplus::FontStyleRegular);
     Gdiplus::SolidBrush redBrush(Gdiplus::Color(255, 162, 32, 45));
     g.DrawString(szBuf, -1, &fontReg, Gdiplus::PointF((float)cx, (float)cy + 255), &format, &redBrush);
@@ -245,7 +244,8 @@ void AuthQRCodeDlg::OnTimer(UINT_PTR nIDEvent)
         if (m_nCountdown > 0) {
             m_nCountdown--;
             // Only invalidate time area to save performance
-            CRect rect; GetClientRect(&rect);
+            CRect rect; 
+            GetClientRect(&rect);
             CRect rectTime(rect.Width() - 400, 140, rect.Width(), 210);
             InvalidateRect(&rectTime, FALSE);
             int cx = rect.Width() / 2; int cy = rect.Height() / 2 + 40;

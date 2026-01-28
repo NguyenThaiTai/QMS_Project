@@ -1,14 +1,6 @@
 ﻿// Kiosk_GetNumbers_AppDlg.h : header file
 #pragma once
-
-// add start include authentication dialog headers NTTai 20260123
 #include "AuthScreen.h"
-#include "AuthFingerDlg.h" 
-#include "AuthIDCardDlg.h" 
-#include "AuthFaceIDDlg.h" 
-#include "AuthQRCodeDlg.h" 
-#include "NoAuthDlg.h"     
-// add end include authentication dialog headers NTTai 20260123
 
 // CKioskGetNumbersAppDlg dialog
 class CKioskGetNumbersAppDlg : public CDialogEx

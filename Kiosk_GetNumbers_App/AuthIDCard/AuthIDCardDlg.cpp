@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "AuthIDCardDlg.h"
-#include "DatabaseManager.h"
+#include "../DatabaseManager/DatabaseManager.h"
 #include "AuthCorrect.h"
-#include "NoAuthDlg.h"
+#include "../NoAuthDlg.h"
 #include "FakeCCCDReader.h" // add include fake reader for simulation NTTai 20260114
 
 IMPLEMENT_DYNAMIC(AuthIDCardDlg, CDialogEx)
@@ -423,8 +423,8 @@ void AuthIDCardDlg::OnLButtonDown(UINT nFlags, CPoint point)
         m_bDeleteBtnPressed = true;
         CRect rInv((int)m_rectDeleteBtn.X, (int)m_rectDeleteBtn.Y, (int)m_rectDeleteBtn.GetRight() + 1, (int)m_rectDeleteBtn.GetBottom() + 1);
         InvalidateRect(&rInv, FALSE);
-    }
 
+    }
     CDialogEx::OnLButtonDown(nFlags, point);
 }
 
@@ -455,11 +455,9 @@ LRESULT AuthIDCardDlg::OnScanComplete(WPARAM wParam, LPARAM lParam)
             }
 
             if (bSaveOK) {
-                // add show success dialog (AuthCorrect) overlaying current dialog NTTai 20260114
                 AuthCorrect dlgCorrect(pData->strFullName, false, this);
                 dlgCorrect.SetAuthData(m_scannedData);
                 dlgCorrect.DoModal();
-                // add close this dialog when flow finished NTTai 20260114
                 EndDialog(IDOK);
             }
             else {
@@ -491,10 +489,11 @@ void AuthIDCardDlg::DrawTestButton(Gdiplus::Graphics& g, int cx, int cy)
     format.SetLineAlignment(Gdiplus::StringAlignmentCenter);
 
     g.DrawString(L"Giả lập Quét Thẻ",
-        -1,
-        &Gdiplus::Font(L"Segoe UI", 12, Gdiplus::FontStyleBold),
-        m_rectTestBtn, &format,
-        &Gdiplus::SolidBrush(Gdiplus::Color::White));
+                -1,
+                &Gdiplus::Font(L"Segoe UI", 12, Gdiplus::FontStyleBold),
+                m_rectTestBtn, 
+                &format,
+                &Gdiplus::SolidBrush(Gdiplus::Color::White));
 }
 
 void AuthIDCardDlg::DrawDeleteButton(Gdiplus::Graphics& g, int cx, int cy)
@@ -514,10 +513,11 @@ void AuthIDCardDlg::DrawDeleteButton(Gdiplus::Graphics& g, int cx, int cy)
     format.SetLineAlignment(Gdiplus::StringAlignmentCenter);
 
     g.DrawString(L"Xóa sạch Database",
-        -1,
-        &Gdiplus::Font(L"Segoe UI", 12, Gdiplus::FontStyleBold),
-        m_rectDeleteBtn, &format,
-        &Gdiplus::SolidBrush(Gdiplus::Color::White));
+                -1,
+                &Gdiplus::Font(L"Segoe UI", 12, Gdiplus::FontStyleBold),
+                m_rectDeleteBtn,
+                &format,
+                &Gdiplus::SolidBrush(Gdiplus::Color::White));
 }
 
 // add start worker thread for scanning process NTTai 20260114
@@ -546,7 +546,8 @@ bool AuthIDCardDlg::ValidateCCCD(const CString& strCCCD)
     if (strCCCD.GetLength() != 12) return false;
 
     for (int i = 0; i < strCCCD.GetLength(); i++) {
-        if (!iswdigit(strCCCD[i])) {
+        if (!iswdigit(strCCCD[i])) 
+        {
             return false;
         }
     }
