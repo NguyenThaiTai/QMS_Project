@@ -18,7 +18,7 @@ END_MESSAGE_MAP()
 AuthQRCodeDlg::AuthQRCodeDlg(CWnd* pParent)
     : CDialogEx(IDD_AUTH_QRCODE_DIALOG, pParent)
 {
-    m_nCountdown = 59;
+    m_nCountdown = 29;
     m_bIsLoading = false; // add init loading state NTTai 20260123
     m_strQRData = L"";
 }
@@ -40,17 +40,16 @@ BOOL AuthQRCodeDlg::OnInitDialog()
     return TRUE;
 }
 
-// add start async QR fetching logic using Thread NTTai 20260123
 void AuthQRCodeDlg::RefreshQRCode()
 {
     if (m_bIsLoading) return;
-
     m_bIsLoading = true;
     m_strQRData = L"";
-    Invalidate();      // Redraw UI immediately
+    Invalidate(); 
     AfxBeginThread(QrFetcherThreadProc, this->GetSafeHwnd());
 }
 
+// add start worker thread to fetch QR URL NTTai 20260123
 UINT __cdecl AuthQRCodeDlg::QrFetcherThreadProc(LPVOID pParam)
 {
     HWND hWnd = (HWND)pParam;
@@ -69,7 +68,9 @@ UINT __cdecl AuthQRCodeDlg::QrFetcherThreadProc(LPVOID pParam)
     ::PostMessage(hWnd, WM_API_QR_RESULT, 0, (LPARAM)pResult);
     return 0;
 }
+// add end worker thread to fetch QR URL NTTai 20260123
 
+// add start handler for QR result message NTTai 20260123
 LRESULT AuthQRCodeDlg::OnApiQrResult(WPARAM wParam, LPARAM lParam)
 {
     m_bIsLoading = false;
@@ -77,18 +78,17 @@ LRESULT AuthQRCodeDlg::OnApiQrResult(WPARAM wParam, LPARAM lParam)
 
     if (pResult && pResult->success) {
         m_strQRData = pResult->url;
-        m_nCountdown = 29; // Reset countdown only when data arrives
+        m_nCountdown = 29;
     }
     else {
-        // Handle error if needed
         TRACE(L"Failed to fetch QR Code URL\n");
     }
 
     if (pResult) delete pResult;
-    Invalidate(); // Redraw UI with new QR or error
+    Invalidate();
     return 0;
 }
-// add end async QR fetching logic using Thread NTTai 20260123
+// add end handler for QR result message NTTai 20260123
 
 void AuthQRCodeDlg::OnPaint()
 {
@@ -121,7 +121,8 @@ void AuthQRCodeDlg::OnPaint()
 
 void AuthQRCodeDlg::DrawInstructions(Gdiplus::Graphics& g, int cx, int cy)
 {
-    Gdiplus::StringFormat format; format.SetAlignment(Gdiplus::StringAlignmentCenter);
+    Gdiplus::StringFormat format;
+    format.SetAlignment(Gdiplus::StringAlignmentCenter);
     Gdiplus::Font fontTitle(L"Segoe UI", 32, Gdiplus::FontStyleBold);
     Gdiplus::SolidBrush blackBrush(Gdiplus::Color(255, 30, 30, 30));
     g.DrawString(L"Vui lòng quét mã QR để xác thực", -1, &fontTitle, Gdiplus::PointF((float)cx, (float)cy - 350), &format, &blackBrush);
@@ -135,12 +136,14 @@ void AuthQRCodeDlg::DrawQRCodeGraphic(Gdiplus::Graphics& g, int cx, int cy)
 {
     float qrAreaSize = 320.0f;
     Gdiplus::RectF qrAreaRect((float)cx - qrAreaSize / 2.0f, (float)cy - 180.0f, qrAreaSize, qrAreaSize);
-    Gdiplus::GraphicsPath areaPath; CButtonUI::AddRoundedRectToPath(areaPath, qrAreaRect, 20.0f);
+    Gdiplus::GraphicsPath areaPath; 
+    CButtonUI::AddRoundedRectToPath(areaPath, qrAreaRect, 20.0f);
     g.FillPath(&Gdiplus::SolidBrush(Gdiplus::Color(255, 255, 218, 185)), &areaPath);
 
     // Draw 4 red L-shaped corners
     Gdiplus::Pen framePen(Gdiplus::Color(255, 162, 32, 45), 6.0f);
-    framePen.SetStartCap(Gdiplus::LineCapRound); framePen.SetEndCap(Gdiplus::LineCapRound);
+    framePen.SetStartCap(Gdiplus::LineCapRound); 
+    framePen.SetEndCap(Gdiplus::LineCapRound);
     float len = 45.0f; float gap = 20.0f;
     Gdiplus::RectF outer = qrAreaRect; outer.Inflate(gap, gap);
     g.DrawLine(&framePen, outer.X, outer.Y, outer.X + len, outer.Y);
@@ -152,7 +155,7 @@ void AuthQRCodeDlg::DrawQRCodeGraphic(Gdiplus::Graphics& g, int cx, int cy)
     g.DrawLine(&framePen, outer.GetRight(), outer.GetBottom(), outer.GetRight() - len, outer.GetBottom());
     g.DrawLine(&framePen, outer.GetRight(), outer.GetBottom(), outer.GetRight(), outer.GetBottom() - len);
 
-    // Check loading state
+    // Check loading state  
     if (m_bIsLoading) {
         Gdiplus::Font fontLoad(L"Segoe UI", 12);
         Gdiplus::SolidBrush brushLoad(Gdiplus::Color(255, 100, 100, 100));
@@ -162,17 +165,17 @@ void AuthQRCodeDlg::DrawQRCodeGraphic(Gdiplus::Graphics& g, int cx, int cy)
     }
 
     if (m_strQRData.IsEmpty()) {
-        // Fallback if load failed
         return;
     }
 
     // Draw White Card
-    float cardSize = 260.0f; Gdiplus::RectF cardRect((float)cx - cardSize / 2.0f, qrAreaRect.Y + (qrAreaSize - cardSize) / 2.0f, cardSize, cardSize);
-    Gdiplus::RectF shadow = cardRect; shadow.Offset(5, 5);
+    float cardSize = 260.0f; 
+    Gdiplus::RectF cardRect((float)cx - cardSize / 2.0f, qrAreaRect.Y + (qrAreaSize - cardSize) / 2.0f, cardSize, cardSize);
+    Gdiplus::RectF shadow = cardRect; 
+    shadow.Offset(5, 5);
     g.FillRectangle(&Gdiplus::SolidBrush(Gdiplus::Color(40, 0, 0, 0)), shadow);
     g.FillRectangle(&Gdiplus::SolidBrush(Gdiplus::Color::White), cardRect);
 
-    // --- DRAW REAL QR CODE (LOGIC TỪ CODE CŨ) ---
     try {
         CStringA strUrlUTF8 = CW2A(m_strQRData, CP_UTF8); // Convert to UTF8 for qrcodegen
         QrCode qr = QrCode::encodeText((LPCSTR)strUrlUTF8, QrCode::Ecc::HIGH); // Use HIGH ECC for center logo
@@ -231,7 +234,7 @@ void AuthQRCodeDlg::DrawStatusBox(Gdiplus::Graphics& g, int cx, int cy)
     Gdiplus::SolidBrush blackBrush(Gdiplus::Color(255, 30, 30, 30));
     g.DrawString(L"Sử dụng camera để quét mã và thực hiện giao dịch", -1, &fontBold, Gdiplus::PointF((float)cx, (float)cy + 225), &format, &blackBrush);
 
-    wchar_t szBuf[64]; 
+    wchar_t szBuf[64];
     swprintf_s(szBuf, L"Mã QR sẽ tự động làm mới sau %ds", m_nCountdown);
     Gdiplus::Font fontReg(L"Segoe UI", 11, Gdiplus::FontStyleRegular);
     Gdiplus::SolidBrush redBrush(Gdiplus::Color(255, 162, 32, 45));
@@ -243,17 +246,17 @@ void AuthQRCodeDlg::OnTimer(UINT_PTR nIDEvent)
     if (nIDEvent == 1) {
         if (m_nCountdown > 0) {
             m_nCountdown--;
-            // Only invalidate time area to save performance
             CRect rect; 
             GetClientRect(&rect);
             CRect rectTime(rect.Width() - 400, 140, rect.Width(), 210);
             InvalidateRect(&rectTime, FALSE);
-            int cx = rect.Width() / 2; int cy = rect.Height() / 2 + 40;
+            int cx = rect.Width() / 2; 
+            int cy = rect.Height() / 2 + 40;
             CRect rectCountdown(cx - 250, cy + 200, cx + 250, cy + 300);
             InvalidateRect(&rectCountdown, FALSE);
         }
         else {
-            RefreshQRCode(); // Auto refresh when timeout
+            RefreshQRCode();
         }
     }
     CDialogEx::OnTimer(nIDEvent);

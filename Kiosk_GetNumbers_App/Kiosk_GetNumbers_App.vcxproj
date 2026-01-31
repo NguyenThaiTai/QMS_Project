@@ -186,9 +186,9 @@
     <ClInclude Include="API\ApiService.h" />
     <ClInclude Include="AuthFaceID\AuthFaceIDDlg.h" />
     <ClInclude Include="AuthFinger_Dialog\AuthFingerDlg.h" />
-    <ClInclude Include="AuthIDCard\AuthCorrect.h" />
-    <ClInclude Include="AuthIDCard_Dialog\AuthIDCardDlg.h" />
-    <ClInclude Include="AuthIDCard_Dialog\FakeCCCDReader.h" />
+    <ClInclude Include="AuthIDCard\UI\AuthCorrect.h" />
+    <ClInclude Include="AuthIDCard\UI\AuthIDCardDlg.h" />
+    <ClInclude Include="AuthIDCard\UI\FakeCCCDReader.h" />
     <ClInclude Include="AuthQRCode\AuthQRCodeDlg.h" />
     <ClInclude Include="AuthQRCode\qrcodegen.hpp" />
     <ClInclude Include="Common\AppMessages.h" />
@@ -200,6 +200,8 @@
     <ClInclude Include="DatabaseManager\sqlite3.h" />
     <ClInclude Include="DisplayNumbers\DisplayNumbersDlg.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Interface\Common\DeviceFactory.h" />
+    <ClInclude Include="Interface\Common\InterfaceAdapterDevice.h" />
     <ClInclude Include="Kiosk_GetNumbers_App.h" />
     <ClInclude Include="MainScreen\AuthScreen.h" />
     <ClInclude Include="MainScreen\Kiosk_GetNumbers_AppDlg.h" />
@@ -212,11 +214,14 @@
     <ClCompile Include="API\ApiService.cpp" />
     <ClCompile Include="AuthFaceID\AuthFaceIDDlg.cpp" />
     <ClCompile Include="AuthFinger\AuthFingerDlg.cpp" />
-    <ClCompile Include="AuthIDCard\AuthCorrect.cpp" />
-    <ClCompile Include="AuthIDCard\AuthIDCardDlg.cpp" />
-    <ClCompile Include="AuthIDCard\FakeCCCDReader.cpp" />
+    <ClCompile Include="AuthIDCard\UI\AuthCorrect.cpp" />
+    <ClCompile Include="AuthIDCard\UI\AuthIDCardDlg.cpp" />
+    <ClCompile Include="AuthIDCard\UI\FakeCCCDReader.cpp" />
     <ClCompile Include="AuthQRCode\AuthQRCodeDlg.cpp" />
-    <ClCompile Include="AuthQRCode\qrcodegen.cpp" />
+    <ClCompile Include="AuthQRCode\qrcodegen.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Common\ButtonUI.cpp" />
     <ClCompile Include="Common\HeaderUI.cpp" />
     <ClCompile Include="ConfigManagement\ConfigManagement.cpp" />

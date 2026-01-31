@@ -1,10 +1,18 @@
 ﻿#pragma once
 #include "afxdialogex.h"
 #include <gdiplus.h>
-#include "../resource.h" 
-#include "../Common/ButtonUI.h"
-#include "../Common/HeaderUI.h"
-#include "../Common/Common.h" // add include shared data structure NTTai 20260114
+#include "../../resource.h" 
+#include "../../Common/ButtonUI.h"
+#include "../../Common/HeaderUI.h"
+#include "../../Common/Common.h" // add include shared data structure NTTai 20260114
+#include "../../DatabaseManager/DatabaseManager.h"
+#include "AuthCorrect.h"
+#include "../../NoAuth/NoAuthDlg.h"
+//#include "FakeCCCDReader.h" // add include fake reader for simulation NTTai 20260114
+// add start include hardware adapter classes NTTai 20260130
+#include "../../Interface/Common/InterfaceAdapterDevice.h"
+#include "../../Interface/Common/DeviceFactory.h"
+// add end include hardware adapter classes NTTai 20260130
 
 #define WM_USER_SCAN_COMPLETE (WM_USER + 100)
 
@@ -14,7 +22,7 @@ enum AuthState {
     STATE_PROCESSING    // Reading chip/processing (Loading)
 };
 
-class AuthIDCardDlg : public CDialogEx
+class AuthIDCardDlg : public CDialogEx, public IDeviceListener
 {
     DECLARE_DYNAMIC(AuthIDCardDlg)
 
@@ -36,6 +44,7 @@ protected:
     afx_msg void OnTimer(UINT_PTR nIDEvent);
     afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
     afx_msg LRESULT OnScanComplete(WPARAM wParam, LPARAM lParam);
+    afx_msg void OnDestroy();
     DECLARE_MESSAGE_MAP()
 
 private:
@@ -47,7 +56,7 @@ private:
     void DrawLoadingFooter(Gdiplus::Graphics& g, int cx, int cy);
     // add end drawing methods based on state NTTai 20260114
     void StartScanProcess(); // add start scanning process (Test/Real) NTTai 20260114
-    static UINT __cdecl ScanThreadProc(LPVOID pParam);
+    //static UINT __cdecl ScanThreadProc(LPVOID pParam);
     void DrawTestButton(Gdiplus::Graphics& g, int cx, int cy);
     void DrawDeleteButton(Gdiplus::Graphics& g, int cx, int cy);
 	bool ValidateCCCD(const CString& strCCCD); // add implementation of CCCD validation logic NTTai 20260126
@@ -66,7 +75,16 @@ private:
     bool m_bDeleteBtnPressed = false;
     bool m_bProgressIncreasing;
 	// add end button variables for test data NTTai 20260114
+
+	IDeviceAdapter* m_pDevice; // add device adapter for hardware integration NTTai 20260130
     
 public:
     CitizenCardData GetScannedData() const { return m_scannedData; } // add getter for scanned data NTTai 20260114
+
+	// add start IDeviceListener implementation NTTai 20260130
+    virtual void OnDeviceConnected() override;
+    virtual void OnDeviceDisconnected() override;
+    virtual void OnScanSuccess(const CitizenCardData& data) override;
+    virtual void OnScanError(CString strError) override;
+	// add end IDeviceListener implementation NTTai 20260130
 };

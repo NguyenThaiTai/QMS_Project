@@ -1,9 +1,7 @@
 ﻿#include "pch.h"
 #include "AuthIDCardDlg.h"
-#include "../DatabaseManager/DatabaseManager.h"
-#include "AuthCorrect.h"
-#include "../NoAuthDlg.h"
-#include "FakeCCCDReader.h" // add include fake reader for simulation NTTai 20260114
+
+#define DEVICE_NAME L"modules//IDCard_Device.dll"
 
 IMPLEMENT_DYNAMIC(AuthIDCardDlg, CDialogEx)
 
@@ -14,6 +12,7 @@ BEGIN_MESSAGE_MAP(AuthIDCardDlg, CDialogEx)
     ON_WM_TIMER()
     ON_WM_LBUTTONDOWN()
     ON_MESSAGE(WM_USER_SCAN_COMPLETE, &AuthIDCardDlg::OnScanComplete)
+    ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 AuthIDCardDlg::AuthIDCardDlg(CWnd* pParent)
@@ -42,6 +41,23 @@ BOOL AuthIDCardDlg::OnInitDialog()
     CHeaderUI::SetFullScreen(this);
     SetTimer(1, 1000, NULL); // add clock timer NTTai 20260114
     SetTimer(2, 30, NULL);   // add scan animation timer NTTai 20260114
+
+	// add start device adapter initialization NTTai 20260130
+    CString strDllName = DEVICE_NAME;
+
+    m_pDevice = DeviceFactory::CreateAdapterFromDLL(strDllName);
+
+    if (m_pDevice) {
+        m_pDevice->RegisterListener(this);
+        m_pDevice->Initialize();
+    }
+    else {
+        AfxMessageBox(L"Lỗi: Không tìm thấy file Driver thiết bị (.dll)!");
+    }
+
+    StartScanProcess();
+	// add end device adapter initialization NTTai 20260130
+
     return TRUE;
 }
 
@@ -332,16 +348,25 @@ void AuthIDCardDlg::OnTimer(UINT_PTR nIDEvent)
 {
     if (nIDEvent == 1 || nIDEvent == 2) {
         if (nIDEvent == 1) {
-            CRect rectClient; GetClientRect(&rectClient);
+            CRect rectClient;
+            GetClientRect(&rectClient);
             CRect rectTime(rectClient.Width() - 400, 140, rectClient.Width(), 210);
             InvalidateRect(&rectTime, FALSE);
         }
         else if (nIDEvent == 2) {
             float speed = 3.5f;
-            if (m_bScanDown) { m_fScanPos += speed; if (m_fScanPos >= 210.0f) m_bScanDown = false; }
-            else { m_fScanPos -= speed; if (m_fScanPos <= 0.0f) m_bScanDown = true; }
-            CRect rect; GetClientRect(&rect);
-            int cx = rect.Width() / 2; int cy = rect.Height() / 2 + 60;
+            if (m_bScanDown) { 
+                m_fScanPos += speed; 
+                if (m_fScanPos >= 210.0f) m_bScanDown = false; 
+            }
+            else { 
+                m_fScanPos -= speed; 
+                if (m_fScanPos <= 0.0f) m_bScanDown = true; 
+            }
+            CRect rect; 
+            GetClientRect(&rect);
+            int cx = rect.Width() / 2; 
+            int cy = rect.Height() / 2 + 60;
             CRect rInvalid(cx - 210, cy - 150, cx + 210, cy + 150);
             InvalidateRect(&rInvalid, FALSE);
         }
@@ -363,7 +388,8 @@ void AuthIDCardDlg::OnTimer(UINT_PTR nIDEvent)
                 m_bProgressIncreasing = true;
             }
         }
-        CRect rect; GetClientRect(&rect);
+        CRect rect; 
+        GetClientRect(&rect);
         int cx = rect.Width() / 2;
         int cy = rect.Height() / 2 + 60;
         CRect rProg(cx - 220, cy + 140, cx + 220, cy + 220);
@@ -373,11 +399,13 @@ void AuthIDCardDlg::OnTimer(UINT_PTR nIDEvent)
     CDialogEx::OnTimer(nIDEvent);
 }
 
+
 // add start start scan process logic NTTai 20260114
 void AuthIDCardDlg::StartScanProcess()
 {
     SetAuthState(STATE_PROCESSING);
-    AfxBeginThread(ScanThreadProc, this);
+    //AfxBeginThread(ScanThreadProc, this);
+	if (m_pDevice) m_pDevice->StartScanning(); // add start real scanning process NTTai 20260130
 }
 // add end start scan process logic NTTai 20260114
 
@@ -520,23 +548,23 @@ void AuthIDCardDlg::DrawDeleteButton(Gdiplus::Graphics& g, int cx, int cy)
                 &Gdiplus::SolidBrush(Gdiplus::Color::White));
 }
 
-// add start worker thread for scanning process NTTai 20260114
-UINT __cdecl AuthIDCardDlg::ScanThreadProc(LPVOID pParam)
-{
-    AuthIDCardDlg* pDlg = (AuthIDCardDlg*)pParam;
-    if (pDlg == nullptr || !pDlg->GetSafeHwnd()) return 1;
-
-    CitizenCardData* pData = new CitizenCardData();
-    if (FakeCCCDReader::ScanCard_Simulation(*pData)) {
-        pDlg->PostMessage(WM_USER_SCAN_COMPLETE, (WPARAM)1, (LPARAM)pData);
-    }
-    else {
-        delete pData;
-        pDlg->PostMessage(WM_USER_SCAN_COMPLETE, (WPARAM)0, 0);
-    }
-    return 0;
-}
-// add end worker thread for scanning process NTTai 20260114
+//// add start worker thread for scanning process NTTai 20260114
+//UINT __cdecl AuthIDCardDlg::ScanThreadProc(LPVOID pParam)
+//{
+//    AuthIDCardDlg* pDlg = (AuthIDCardDlg*)pParam;
+//    if (pDlg == nullptr || !pDlg->GetSafeHwnd()) return 1;
+//
+//    CitizenCardData* pData = new CitizenCardData();
+//    if (FakeCCCDReader::ScanCard_Simulation(*pData)) {
+//        pDlg->PostMessage(WM_USER_SCAN_COMPLETE, (WPARAM)1, (LPARAM)pData);
+//    }
+//    else {
+//        delete pData;
+//        pDlg->PostMessage(WM_USER_SCAN_COMPLETE, (WPARAM)0, 0);
+//    }
+//    return 0;
+//}
+//// add end worker thread for scanning process NTTai 20260114
 
 // add start implementation of CCCD validation logic NTTai 20260126
 bool AuthIDCardDlg::ValidateCCCD(const CString& strCCCD)
@@ -554,3 +582,33 @@ bool AuthIDCardDlg::ValidateCCCD(const CString& strCCCD)
     return true;
 }
 // add end implementation of CCCD validation logic NTTai 20260126
+
+// add start device listener implementations NTTai 20260130
+void AuthIDCardDlg::OnDestroy() {
+    if (m_pDevice) {
+        m_pDevice->Release();
+        delete m_pDevice;
+        m_pDevice = nullptr;
+    }
+    CDialogEx::OnDestroy();
+}
+
+void AuthIDCardDlg::OnScanSuccess(const CitizenCardData& data)
+{
+    CitizenCardData* pDataCopy = new CitizenCardData(data);
+    PostMessage(WM_USER_SCAN_COMPLETE, (WPARAM)1, (LPARAM)pDataCopy);
+}
+
+void AuthIDCardDlg::OnScanError(CString strError)
+{
+    PostMessage(WM_USER_SCAN_COMPLETE, (WPARAM)0, 0);
+}
+
+void AuthIDCardDlg::OnDeviceConnected() {
+
+}
+
+void AuthIDCardDlg::OnDeviceDisconnected() {
+
+}
+// add end device listener implementations NTTai 20260130
