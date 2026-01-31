@@ -10,7 +10,6 @@ public:
             return nullptr;
         }
 
-        // 2. Tìm hàm "CreateDeviceInstance" trong DLL
         CreateAdapterFunc createFunc = (CreateAdapterFunc)GetProcAddress(hDll, "CreateDeviceInstance");
 
         if (!createFunc) {

@@ -2,7 +2,7 @@
 #include "IDCardAdapter.h"
 #include <process.h>
 
-// --- LINK THƯ VIỆN CỦA HÃNG ---s
+// --- LINK LIBRARY ---
 // #pragma comment(lib, "VendorSDK/ZKReader.lib")
 
 IDCardAdapter::IDCardAdapter() {
