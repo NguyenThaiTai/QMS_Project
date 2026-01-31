@@ -2,8 +2,7 @@
 #include "AuthFingerDlg.h"
 //#include "Kiosk_GetNumbers_AppDlg.h"
 
-
-
+#define DEVICE_NAME L"Finger_Device.dll"
 
 IMPLEMENT_DYNAMIC(AuthFingerDlg, CDialogEx)
 
@@ -13,6 +12,8 @@ BEGIN_MESSAGE_MAP(AuthFingerDlg, CDialogEx)
 	ON_WM_TIMER() // add display date-time NTTai 20260106
 	ON_WM_ERASEBKGND()
 	ON_WM_LBUTTONUP()
+	ON_WM_DESTROY()
+	ON_MESSAGE(WM_USER_FINGER_SCAN_COMPLETE, &AuthFingerDlg::OnScanComplete)
 END_MESSAGE_MAP()
 
 // add start prevent background erase flickering NTTai 20260106
@@ -77,6 +78,18 @@ BOOL AuthFingerDlg::OnInitDialog()
 	SetTimer(1, 1000, NULL);
 	// add end draw header UI NTTai 20260501
 	SetTimer(2, 40, NULL);   // add start set effect timer (25 FPS) NTTai 20260106
+
+	CString strDllName = DEVICE_NAME;
+	m_pDevice = DeviceFactory::CreateAdapterFromDLL(strDllName);
+
+	if (m_pDevice) {
+		m_pDevice->RegisterListener(this); // Đăng ký nhận sự kiện
+		m_pDevice->Initialize();           // Khởi động thiết bị
+		m_pDevice->StartScanning();        // Bắt đầu quét
+	}
+	else {
+		AfxMessageBox(L"Lỗi: Không tìm thấy Module Fingerprint! (.dll file)");
+	}
     return TRUE;
 }
 
@@ -313,3 +326,71 @@ void AuthFingerDlg::OnLButtonUp(UINT nFlags, CPoint point)
 	CDialogEx::OnLButtonUp(nFlags, point);
 }
 // add end handle mouse click on cancel button NTTai 20260106
+
+// add start handle clean up resources NTTai 20260131
+void AuthFingerDlg::OnDestroy() {
+	if (m_pDevice) {
+		m_pDevice->Release();
+		delete m_pDevice;
+		m_pDevice = nullptr;
+	}
+	CDialogEx::OnDestroy();
+}
+// add end handle clean up resources NTTai 20260131
+
+// add start handle scan completion logic (Thread) NTTai 20260131
+LRESULT AuthFingerDlg::OnScanComplete(WPARAM wParam, LPARAM lParam)
+{
+	if (wParam == 1) {
+		CitizenCardData* pData = (CitizenCardData*)lParam;
+		if (pData) {
+			DatabaseManager db;
+			bool bIsNew = false;
+
+			if (db.InitializeDB()) {
+				if (!db.IsCustomerExist(pData->strIDNumber)) bIsNew = true;
+				db.SaveCustomer(*pData);
+				db.CloseDB();
+			}
+
+			AuthCorrect dlgCorrect(pData->strFullName, bIsNew, this);
+			dlgCorrect.SetAuthData(*pData);
+			dlgCorrect.DoModal();
+
+			EndDialog(IDOK); 
+			delete pData;
+		}
+	}
+	else if (wParam == 0) {
+		CString* pStrError = (CString*)lParam;
+		CString strMsg = (pStrError && !pStrError->IsEmpty())
+			? *pStrError
+			: L"Lỗi nhận diện: Không thể xác thực vân tay. Vui lòng thử lại.";
+
+		AfxMessageBox(strMsg, MB_ICONERROR);
+
+		if (pStrError) delete pStrError;
+
+		if (m_pDevice) {
+			m_pDevice->StartScanning();
+		}
+	}
+	return 0;
+}
+// add end handle scan completion logic (Thread) NTTai 20260131
+
+// add start implement IDeviceListener interface (Worker Thread) NTTai 20260131
+void AuthFingerDlg::OnDeviceConnected() {}
+
+void AuthFingerDlg::OnDeviceDisconnected() {}
+
+void AuthFingerDlg::OnScanSuccess(const CitizenCardData& data) {
+	CitizenCardData* pDataCopy = new CitizenCardData(data);
+	PostMessage(WM_USER_FINGER_SCAN_COMPLETE, (WPARAM)1, (LPARAM)pDataCopy);
+}
+
+void AuthFingerDlg::OnScanError(CString strError) {
+	CString* pErrStr = new CString(strError);
+	PostMessage(WM_USER_FINGER_SCAN_COMPLETE, (WPARAM)0, (LPARAM)pErrStr);
+}
+// add end implement IDeviceListener interface (Worker Thread) NTTai 20260131

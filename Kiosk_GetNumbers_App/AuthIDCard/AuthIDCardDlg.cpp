@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "AuthIDCardDlg.h"
 
-#define DEVICE_NAME L"modules//IDCard_Device.dll"
+#define DEVICE_NAME L"IDCard_Device.dll"
 
 IMPLEMENT_DYNAMIC(AuthIDCardDlg, CDialogEx)
 

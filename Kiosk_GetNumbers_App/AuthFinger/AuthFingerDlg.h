@@ -6,9 +6,18 @@
 #include "../Common/ButtonUI.h"
 #include "../Common/HeaderUI.h"
 #include <iostream>
+// add start include hardware adapter classes NTTai 20260131
+#include "../Interface/Common/InterfaceAdapterDevice.h"
+#include "../Interface/Common/DeviceFactory.h"
+// add end include hardware adapter classes NTTai 20260131
+
+#include "../DatabaseManager/DatabaseManager.h"
+#include "../Common/AuthSuccess/AuthCorrect.h"
+
+#define WM_USER_FINGER_SCAN_COMPLETE (WM_USER + 102)
 
 class CButtonUI;
-class AuthFingerDlg : public CDialogEx
+class AuthFingerDlg : public CDialogEx, public IDeviceListener
 {
     DECLARE_DYNAMIC(AuthFingerDlg)
 
@@ -32,6 +41,8 @@ protected:
     afx_msg void OnTimer(UINT_PTR nIDEvent); // add set date-time NTTai 20250106
     afx_msg BOOL OnEraseBkgnd(CDC* pDC);
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+    afx_msg void OnDestroy();
+    afx_msg LRESULT OnScanComplete(WPARAM wParam, LPARAM lParam);
     DECLARE_MESSAGE_MAP()
 
 private:
@@ -55,7 +66,14 @@ private:
     CFont m_fontStatus;
     Gdiplus::RectF m_rectCancelBtn;
 	// add end member variable NTTai 20260106
-protected:
 
+    IDeviceAdapter* m_pDevice; // add start device adapter instance NTTai 20260131
+protected:
+    // add start implement IDeviceListener interface NTTai 20260131
+    virtual void OnDeviceConnected() override;
+    virtual void OnDeviceDisconnected() override;
+    virtual void OnScanSuccess(const CitizenCardData& data) override;
+    virtual void OnScanError(CString strError) override;
+    // add end implement IDeviceListener interface NTTai 20260131
 };
 

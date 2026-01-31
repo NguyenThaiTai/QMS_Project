@@ -185,13 +185,12 @@
   <ItemGroup>
     <ClInclude Include="API\ApiService.h" />
     <ClInclude Include="AuthFaceID\AuthFaceIDDlg.h" />
-    <ClInclude Include="AuthFinger_Dialog\AuthFingerDlg.h" />
-    <ClInclude Include="AuthIDCard\UI\AuthCorrect.h" />
-    <ClInclude Include="AuthIDCard\UI\AuthIDCardDlg.h" />
-    <ClInclude Include="AuthIDCard\UI\FakeCCCDReader.h" />
+    <ClInclude Include="AuthFinger\AuthFingerDlg.h" />
+    <ClInclude Include="AuthIDCard\AuthIDCardDlg.h" />
     <ClInclude Include="AuthQRCode\AuthQRCodeDlg.h" />
     <ClInclude Include="AuthQRCode\qrcodegen.hpp" />
     <ClInclude Include="Common\AppMessages.h" />
+    <ClInclude Include="Common\AuthSuccess\AuthCorrect.h" />
     <ClInclude Include="Common\ButtonUI.h" />
     <ClInclude Include="Common\Common.h" />
     <ClInclude Include="Common\HeaderUI.h" />
@@ -214,14 +213,13 @@
     <ClCompile Include="API\ApiService.cpp" />
     <ClCompile Include="AuthFaceID\AuthFaceIDDlg.cpp" />
     <ClCompile Include="AuthFinger\AuthFingerDlg.cpp" />
-    <ClCompile Include="AuthIDCard\UI\AuthCorrect.cpp" />
-    <ClCompile Include="AuthIDCard\UI\AuthIDCardDlg.cpp" />
-    <ClCompile Include="AuthIDCard\UI\FakeCCCDReader.cpp" />
+    <ClCompile Include="AuthIDCard\AuthIDCardDlg.cpp" />
     <ClCompile Include="AuthQRCode\AuthQRCodeDlg.cpp" />
     <ClCompile Include="AuthQRCode\qrcodegen.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Common\AuthSuccess\AuthCorrect.cpp" />
     <ClCompile Include="Common\ButtonUI.cpp" />
     <ClCompile Include="Common\HeaderUI.cpp" />
     <ClCompile Include="ConfigManagement\ConfigManagement.cpp" />

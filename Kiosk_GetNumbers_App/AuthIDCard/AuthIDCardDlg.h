@@ -1,17 +1,17 @@
 ﻿#pragma once
 #include "afxdialogex.h"
 #include <gdiplus.h>
-#include "../../resource.h" 
-#include "../../Common/ButtonUI.h"
-#include "../../Common/HeaderUI.h"
-#include "../../Common/Common.h" // add include shared data structure NTTai 20260114
-#include "../../DatabaseManager/DatabaseManager.h"
-#include "AuthCorrect.h"
-#include "../../NoAuth/NoAuthDlg.h"
+#include "../resource.h" 
+#include "../Common/ButtonUI.h"
+#include "../Common/HeaderUI.h"
+#include "../Common/Common.h" // add include shared data structure NTTai 20260114
+#include "../DatabaseManager/DatabaseManager.h"
+#include "../Common/AuthSuccess/AuthCorrect.h"
+#include "../NoAuth/NoAuthDlg.h"
 //#include "FakeCCCDReader.h" // add include fake reader for simulation NTTai 20260114
 // add start include hardware adapter classes NTTai 20260130
-#include "../../Interface/Common/InterfaceAdapterDevice.h"
-#include "../../Interface/Common/DeviceFactory.h"
+#include "../Interface/Common/InterfaceAdapterDevice.h"
+#include "../Interface/Common/DeviceFactory.h"
 // add end include hardware adapter classes NTTai 20260130
 
 #define WM_USER_SCAN_COMPLETE (WM_USER + 100)

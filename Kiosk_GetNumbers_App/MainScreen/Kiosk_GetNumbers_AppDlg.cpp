@@ -7,7 +7,7 @@
 #include "../Common/HeaderUI.h" 
 // add start include authentication dialog headers NTTai 20260123
 #include "../AuthFinger/AuthFingerDlg.h"
-#include "../AuthIDCard/UI/AuthIDCardDlg.h"
+#include "../AuthIDCard/AuthIDCardDlg.h"
 #include "../AuthFaceID/AuthFaceIDDlg.h" 
 #include "../AuthQRCode/AuthQRCodeDlg.h"
 #include "../NoAuth/NoAuthDlg.h"     

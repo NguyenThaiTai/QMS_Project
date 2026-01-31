@@ -58,7 +58,7 @@ unsigned int __stdcall IDCardAdapter::ScanThread(void* pParam)
             CitizenCardData outData;
             outData.strIDNumber = L"045088009999";
             outData.strCMND = L"987654321";
-            outData.strFullName = L"Nguyễn Văn Device";
+            outData.strFullName = L"Nguyễn Văn IDCard";
             outData.strDateOfBirth = L"05/05/1988";
             outData.strGender = L"Nam";
             outData.strPlaceOfResidence = L"789 Lê Duẩn, TP. Đà Nẵng";

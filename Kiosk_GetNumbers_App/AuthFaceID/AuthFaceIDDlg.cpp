@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "AuthFaceIDDlg.h"
 
+#define DEVICE_NAME L"FaceID_Device.dll"
 
 IMPLEMENT_DYNAMIC(AuthFaceIDDlg, CDialogEx)
 
@@ -10,6 +11,8 @@ BEGIN_MESSAGE_MAP(AuthFaceIDDlg, CDialogEx)
     ON_WM_ERASEBKGND()
     ON_WM_LBUTTONUP()
     ON_WM_TIMER()
+    ON_WM_DESTROY()
+    ON_MESSAGE(WM_USER_FACEID_SCAN_COMPLETE, &AuthFaceIDDlg::OnScanComplete)
 END_MESSAGE_MAP()
 
 // add corrected constructor NTTai 20260115
@@ -36,7 +39,20 @@ BOOL AuthFaceIDDlg::OnInitDialog()
     SetTimer(1, 1000, NULL); // Clock timer
     SetTimer(2, 30, NULL);   // Animation timer (Reserved for FaceID)
     // add end initialize timers and screen mode NTTai 20260115
+
+	// add start initialize FaceID device adapter NTTai 20260131 
+    CString strDllName = DEVICE_NAME;
+    m_pDevice = DeviceFactory::CreateAdapterFromDLL(strDllName);
+    if (m_pDevice) {
+        m_pDevice->RegisterListener(this);
+        m_pDevice->Initialize();
+        m_pDevice->StartScanning();
+    }
+    else {
+        AfxMessageBox(L"Lỗi: Không tìm thấy Module FaceID! (.dll file)");
+    }
     return TRUE;
+	// add end initialize FaceID device adapter NTTai 20260131
 }
 
 void AuthFaceIDDlg::OnPaint()
@@ -132,7 +148,15 @@ void AuthFaceIDDlg::OnLButtonUp(UINT nFlags, CPoint point)
     CDialogEx::OnLButtonUp(nFlags, point);
 }
 
-// MODULE 1: Draw instruction texts for FaceID NTTai 20260115
+void AuthFaceIDDlg::OnDestroy() {
+    if (m_pDevice) {
+        m_pDevice->Release();
+        delete m_pDevice;
+        m_pDevice = nullptr;
+    }
+    CDialogEx::OnDestroy();
+}
+
 void AuthFaceIDDlg::DrawInstructions(Gdiplus::Graphics& g, int cx, int cy)
 {
     Gdiplus::StringFormat format;
@@ -149,7 +173,6 @@ void AuthFaceIDDlg::DrawInstructions(Gdiplus::Graphics& g, int cx, int cy)
         Gdiplus::PointF((float)cx, (float)cy - 270), &format, &subBrush);
 }
 
-// MODULE 2: Draw circular face scanner with animated beam NTTai 20260115
 void AuthFaceIDDlg::DrawFaceScannerGraphic(Gdiplus::Graphics& g, int cx, int cy)
 {
     float scannerRadius = 160.0f;
@@ -210,7 +233,7 @@ void AuthFaceIDDlg::DrawFaceScannerGraphic(Gdiplus::Graphics& g, int cx, int cy)
     g.DrawEllipse(&Gdiplus::Pen(Gdiplus::Color(255, 162, 32, 45), 5.0f), scanRect);
 }
 
-// MODULE 3: Draw bottom status note for FaceID NTTai 20260115
+
 void AuthFaceIDDlg::DrawStatusBox(Gdiplus::Graphics& g, int cx, int cy)
 {
     // add start define box dimensions and position NTTai 20260115
@@ -249,3 +272,55 @@ void AuthFaceIDDlg::DrawStatusBox(Gdiplus::Graphics& g, int cx, int cy)
         &fontDesc, textRect, &format, &blackBrush);
     // add end draw instruction text NTTai 20260115
 }
+
+// add start handle scan completion logic NTTai 20260131
+LRESULT AuthFaceIDDlg::OnScanComplete(WPARAM wParam, LPARAM lParam)
+{
+    if (wParam == 1) {
+        CitizenCardData* pData = (CitizenCardData*)lParam;
+        if (pData) {
+            DatabaseManager db;
+            bool bIsNew = false;
+            if (db.InitializeDB()) {
+                if (!db.IsCustomerExist(pData->strIDNumber)) bIsNew = true;
+                db.SaveCustomer(*pData);
+                db.CloseDB();
+            }
+            AuthCorrect dlgCorrect(pData->strFullName, bIsNew, this);
+            dlgCorrect.SetAuthData(*pData);
+            dlgCorrect.DoModal(); 
+            EndDialog(IDOK);
+
+            delete pData; 
+        }
+    }
+    else if (wParam == 0) {
+        CString* pStrError = (CString*)lParam;
+        CString strMsg = (pStrError && !pStrError->IsEmpty()) ? *pStrError : L"Lỗi nhận diện: Không thể xác thực khuôn mặt. Vui lòng thử lại.";
+        AfxMessageBox(strMsg, MB_ICONERROR);
+        if (pStrError) delete pStrError;
+        if (m_pDevice) {
+            m_pDevice->StartScanning();
+        }
+    }
+    return 0;
+}
+// add end handle scan completion logic NTTai 20260131
+
+// add start implement IDeviceListener interface NTTai 20260131
+void AuthFaceIDDlg::OnDeviceConnected()  {
+}
+
+void AuthFaceIDDlg::OnDeviceDisconnected()  {
+}
+
+void AuthFaceIDDlg::OnScanSuccess(const CitizenCardData& data){
+    CitizenCardData* pDataCopy = new CitizenCardData(data);
+    PostMessage(WM_USER_FACEID_SCAN_COMPLETE, (WPARAM)1, (LPARAM)pDataCopy);
+}
+
+ void AuthFaceIDDlg::OnScanError(CString strError) {
+     CString* pErrStr = new CString(strError);
+     PostMessage(WM_USER_FACEID_SCAN_COMPLETE, (WPARAM)0, (LPARAM)pErrStr);
+ }
+ // add end implement IDeviceListener interface NTTai 20260131
