@@ -6,7 +6,6 @@ FaceIDAdapter::FaceIDAdapter() { m_bIsScanning = false; }
 FaceIDAdapter::~FaceIDAdapter() { Release(); }
 
 bool FaceIDAdapter::Initialize() {
-    // Nếu là thiết bị thật: Mở Camera tại đây (OpenCV / SDK Hãng)
     return true;
 }
 
