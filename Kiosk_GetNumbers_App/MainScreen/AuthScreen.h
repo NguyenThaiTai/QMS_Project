@@ -3,7 +3,11 @@
 #include <atlimage.h>
 #include "../resource.h"
 #include <gdiplus.h>
+#include "../Common/Common.h"
+#include "../Common/ButtonUI.h"
+
 #pragma comment(lib, "gdiplus.lib")
+
 using namespace Gdiplus;
 // add start set description text and icon to button NTTais 20250103
 class CCardButton : public CMFCButton

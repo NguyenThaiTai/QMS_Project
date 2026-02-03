@@ -10,6 +10,7 @@ class IDCardAdapter : public IDeviceAdapter
 private:
     bool m_bIsScanning;
     long m_hDeviceHandle;
+    void* m_hThread;
 
 public:
     IDCardAdapter();

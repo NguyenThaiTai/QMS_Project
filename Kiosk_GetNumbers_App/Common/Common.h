@@ -2,6 +2,15 @@
 #pragma once
 #include <atlstr.h>
 #include <vector>
+#include <gdiplus.h>
+
+#ifdef _AFXDLL
+    #include <afxwin.h>
+    #include <afxdialogex.h>
+#else
+    #include <windows.h>
+    #include <atlstr.h>
+#endif
 
 struct CitizenCardData {
     CString strIDNumber;
@@ -24,4 +33,10 @@ struct ServiceData {
     bool operator!=(const ServiceData& other) const {
         return !(*this == other);
     }
+};
+
+class Common {
+public:
+    static Gdiplus::Image* LoadPNGFromResource(UINT nIDResource);
+        
 };

@@ -26,6 +26,10 @@
 #define IDB_PNG_SETTINGBTN              151
 #define IDD_DIALOG1                     152
 #define IDD_AUTH_CORRECT_DIALOG         152
+#define IDD_DIALOG2                     154
+#define IDD_FINGER_OPTIONS_DIALOG       154
+#define IDD_DIALOG3                     156
+#define IDD_FACEID_OPTIONS_DIALOG       156
 #define IDC_STATIC_LOGO                 1000
 #define IDC_STATIC_TITLE                1001
 
@@ -33,7 +37,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        154
+#define _APS_NEXT_RESOURCE_VALUE        158
 #define _APS_NEXT_COMMAND_VALUE         32774
 #define _APS_NEXT_CONTROL_VALUE         1002
 #define _APS_NEXT_SYMED_VALUE           101

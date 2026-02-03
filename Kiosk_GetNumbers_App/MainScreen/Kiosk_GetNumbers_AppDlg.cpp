@@ -13,6 +13,9 @@
 #include "../NoAuth/NoAuthDlg.h"     
 // add end include authentication dialog headers NTTai 20260123
 
+#include "../AuthFinger/FingerOptionDlg.h"
+#include "../AuthFaceID/FaceIDOptionsDlg.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -209,8 +212,10 @@ void CKioskGetNumbersAppDlg::OnButtonAuthClicked(UINT nID)
 	{
 	case ID_AUTH_FINGER:
 	{
-		AuthFingerDlg authFinger_dlg(this);
-		authFinger_dlg.DoModal();
+		//AuthFingerDlg authFinger_dlg(this);
+		//authFinger_dlg.DoModal();
+		FingerOptionDlg fingerOption_dlg(this);
+		fingerOption_dlg.DoModal();
 		break;
 	}
 
@@ -223,8 +228,10 @@ void CKioskGetNumbersAppDlg::OnButtonAuthClicked(UINT nID)
 
 	case ID_AUTH_FACEID:
 	{
-		AuthFaceIDDlg authFace_dlg(this);
-		authFace_dlg.DoModal();
+		//AuthFaceIDDlg authFace_dlg(this);
+		//authFace_dlg.DoModal();
+		FaceOptionDlg faceIDOption_dlg(this);
+		faceIDOption_dlg.DoModal();
 		break;
 	}
 

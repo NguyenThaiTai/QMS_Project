@@ -8,6 +8,7 @@
 IDCardAdapter::IDCardAdapter() {
     m_bIsScanning = false;
     m_hDeviceHandle = 0;
+    m_hThread = nullptr;
 }
 
 IDCardAdapter::~IDCardAdapter() {
@@ -28,7 +29,7 @@ bool IDCardAdapter::Initialize() {
 void IDCardAdapter::StartScanning() {
     if (m_bIsScanning) return;
     m_bIsScanning = true;
-    _beginthreadex(NULL, 0, &IDCardAdapter::ScanThread, this, 0, NULL);
+    m_hThread = (void*)_beginthreadex(NULL, 0, &IDCardAdapter::ScanThread, this, 0, NULL);
 }
 
 void IDCardAdapter::StopScanning() {
@@ -39,6 +40,11 @@ void IDCardAdapter::Release() {
     StopScanning();
 
     //ZK_Disconnect(m_hDeviceHandle);
+    if (m_hThread) {
+        WaitForSingleObject(m_hThread, INFINITE);
+        CloseHandle(m_hThread);
+        m_hThread = nullptr;
+    }
 
     if (m_pListener) m_pListener->OnDeviceDisconnected();
 }

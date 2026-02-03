@@ -90,6 +90,12 @@
     <ClInclude Include="AuthFinger\AuthFingerDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AuthFinger\FingerOptionDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AuthFaceID\FaceIDOptionsDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kiosk_GetNumbers_App.cpp">
@@ -144,6 +150,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AuthIDCard\AuthIDCardDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AuthFinger\FingerOptionDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AuthFaceID\FaceIDOptionsDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

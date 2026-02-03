@@ -34,9 +34,11 @@ BOOL DisplayNumbersDlg::OnInitDialog()
 void DisplayNumbersDlg::OnPaint()
 {
     CPaintDC dc(this);
-    CRect rect; GetClientRect(&rect);
+    CRect rect; 
+    GetClientRect(&rect);
 
-    CDC memDC; memDC.CreateCompatibleDC(&dc);
+    CDC memDC;
+    memDC.CreateCompatibleDC(&dc);
     CBitmap bmp; bmp.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
     CBitmap* pOldBmp = memDC.SelectObject(&bmp);
     Gdiplus::Graphics g(memDC.GetSafeHdc());
@@ -203,10 +205,13 @@ void DisplayNumbersDlg::DrawInstructionBar(Gdiplus::Graphics& g, Gdiplus::RectF 
 void DisplayNumbersDlg::DrawInfoBoxes(Gdiplus::Graphics& g, Gdiplus::RectF cardRect)
 {
 
-    float boxW = 230.0f; float boxH = 120.0f; float gap = 20.0f;
+    float boxW = 230.0f; 
+    float boxH = 120.0f; 
+    float gap = 20.0f;
     float startX = cardRect.X + (cardRect.Width - (boxW * 2 + gap)) / 2;
     float boxY = cardRect.Y + 345;
-    Gdiplus::StringFormat format; format.SetAlignment(Gdiplus::StringAlignmentCenter);
+    Gdiplus::StringFormat format; 
+    format.SetAlignment(Gdiplus::StringAlignmentCenter);
 
     Gdiplus::RectF leftBox(startX, boxY, boxW, boxH);
     Gdiplus::GraphicsPath p1; CButtonUI::AddRoundedRectToPath(p1, leftBox, 20.0f);
@@ -215,7 +220,8 @@ void DisplayNumbersDlg::DrawInfoBoxes(Gdiplus::Graphics& g, Gdiplus::RectF cardR
     g.DrawString(L"Người chờ trước bạn", -1, &Gdiplus::Font(L"Segoe UI", 10), Gdiplus::PointF(leftBox.X + boxW / 2, boxY + 30), &format, &Gdiplus::SolidBrush(Gdiplus::Color(255, 100, 100, 100)));
 
     Gdiplus::RectF rightBox(startX + boxW + gap, boxY, boxW, boxH);
-    Gdiplus::GraphicsPath p2; CButtonUI::AddRoundedRectToPath(p2, rightBox, 20.0f);
+    Gdiplus::GraphicsPath p2; 
+    CButtonUI::AddRoundedRectToPath(p2, rightBox, 20.0f);
     g.FillPath(&Gdiplus::SolidBrush(Gdiplus::Color(255, 235, 245, 255)), &p2);
     g.DrawString(L"5 phút", -1, &Gdiplus::Font(L"Segoe UI", 22, Gdiplus::FontStyleBold), Gdiplus::PointF(rightBox.X + boxW / 2, boxY + 60), &format, &Gdiplus::SolidBrush(Gdiplus::Color::Black));
     g.DrawString(L"Thời gian chờ dự kiến", -1, &Gdiplus::Font(L"Segoe UI", 10), Gdiplus::PointF(rightBox.X + boxW / 2, boxY + 30), &format, &Gdiplus::SolidBrush(Gdiplus::Color(255, 100, 100, 100)));
@@ -230,7 +236,8 @@ void DisplayNumbersDlg::DrawFooterButtons(Gdiplus::Graphics& g, int cx, int cy)
 
     // add start draw print button NTTai 20260112
     m_rectPrintBtn = Gdiplus::RectF(startX, btnY, btnW, btnH);
-    Gdiplus::GraphicsPath p1; CButtonUI::AddRoundedRectToPath(p1, m_rectPrintBtn, 18.0f);
+    Gdiplus::GraphicsPath p1; 
+    CButtonUI::AddRoundedRectToPath(p1, m_rectPrintBtn, 18.0f);
     Gdiplus::Color colorPrint = m_bPrintPressed ? Gdiplus::Color(255, 230, 235, 240) : Gdiplus::Color::White;
     g.FillPath(&Gdiplus::SolidBrush(colorPrint), &p1);
     g.DrawPath(&Gdiplus::Pen(Gdiplus::Color(255, 210, 215, 220), 1.2f), &p1);
@@ -243,7 +250,8 @@ void DisplayNumbersDlg::DrawFooterButtons(Gdiplus::Graphics& g, int cx, int cy)
 
     // add start draw finish button NTTai 20260112
     m_rectFinishBtn = Gdiplus::RectF(startX + btnW + gap, btnY, btnW + 60, btnH);
-    Gdiplus::GraphicsPath p2; CButtonUI::AddRoundedRectToPath(p2, m_rectFinishBtn, 18.0f);
+    Gdiplus::GraphicsPath p2; 
+    CButtonUI::AddRoundedRectToPath(p2, m_rectFinishBtn, 18.0f);
     Gdiplus::Color colorFinish = m_bFinishPressed ? Gdiplus::Color(255, 130, 20, 30) : Gdiplus::Color(255, 162, 32, 45);
     g.FillPath(&Gdiplus::SolidBrush(colorFinish), &p2);
     g.DrawString(L"Hoàn tất & Về trang chủ", -1, &Gdiplus::Font(L"Segoe UI", 17, Gdiplus::FontStyleBold), m_rectFinishBtn, &format, &Gdiplus::SolidBrush(Gdiplus::Color::White));

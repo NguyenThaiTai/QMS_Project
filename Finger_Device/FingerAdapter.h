@@ -5,6 +5,7 @@ class FingerAdapter : public IDeviceAdapter
 {
 private:
     bool m_bIsScanning;
+    void* m_hThread;
 
 public:
     FingerAdapter();

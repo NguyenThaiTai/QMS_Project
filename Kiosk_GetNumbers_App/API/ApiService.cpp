@@ -345,7 +345,7 @@ ApiResponse ApiService::IssueTicket(int serviceID, const CitizenCardData* pAuthD
             L"\"data\": {"
             L"\"cccd\": \"Chưa xác thực\","
             L"\"cmnd\": null,"
-            L"\"full_name\": \"Khách vãng lai\","
+            L"\"full_name\": \"Chưa xác thực\","
             L"\"date_of_birth\": null,"
             L"\"sex\": null,"
             L"\"address\": null,"

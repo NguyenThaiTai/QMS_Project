@@ -29,7 +29,7 @@ public:
     enum { IDD = IDD_AUTH_FINGER_DIALOG };
 #endif
     protected:
-        virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+        virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
     HICON m_hIcon;
@@ -46,14 +46,11 @@ protected:
     DECLARE_MESSAGE_MAP()
 
 private:
-    // --- 5 DRAWING MODULES
     void DrawInstructions(Gdiplus::Graphics& g, int cx, int cy); 
     void DrawPulseCircle(Gdiplus::Graphics& g, int cx, int cy); 
     void DrawMainCircle(Gdiplus::Graphics& g, int cx, int cy);
     void DrawFingerIcon(Gdiplus::Graphics& g, int cx, int cy);
     void DrawStatusLabel(Gdiplus::Graphics& g, int cx, int cy);
-    
-    Gdiplus::Image* LoadPNGFromResource(UINT nIDResource);
 
     float m_fPulseAlpha;
     bool  m_bPulseGrowing;
@@ -75,5 +72,6 @@ protected:
     virtual void OnScanSuccess(const CitizenCardData& data) override;
     virtual void OnScanError(CString strError) override;
     // add end implement IDeviceListener interface NTTai 20260131
+    
 };
 

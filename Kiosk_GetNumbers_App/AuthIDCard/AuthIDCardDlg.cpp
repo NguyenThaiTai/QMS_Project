@@ -55,7 +55,7 @@ BOOL AuthIDCardDlg::OnInitDialog()
         AfxMessageBox(L"Lỗi: Không tìm thấy file Driver thiết bị (.dll)!");
     }
 
-    StartScanProcess();
+    //StartScanProcess();
 	// add end device adapter initialization NTTai 20260130
 
     return TRUE;
@@ -451,7 +451,6 @@ void AuthIDCardDlg::OnLButtonDown(UINT nFlags, CPoint point)
         m_bDeleteBtnPressed = true;
         CRect rInv((int)m_rectDeleteBtn.X, (int)m_rectDeleteBtn.Y, (int)m_rectDeleteBtn.GetRight() + 1, (int)m_rectDeleteBtn.GetBottom() + 1);
         InvalidateRect(&rInv, FALSE);
-
     }
     CDialogEx::OnLButtonDown(nFlags, point);
 }
@@ -471,7 +470,7 @@ LRESULT AuthIDCardDlg::OnScanComplete(WPARAM wParam, LPARAM lParam)
                 return 0;
             }
             // add end validate data before processing NTTai 20260126
-
+            
             m_scannedData = *pData;
             DatabaseManager db;
             bool bIsNew = false;

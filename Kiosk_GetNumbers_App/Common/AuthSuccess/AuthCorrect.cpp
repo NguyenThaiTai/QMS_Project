@@ -131,7 +131,7 @@ void AuthCorrect::DrawMessage(Gdiplus::Graphics& g, int cx, int cy)
     Gdiplus::Font fontSub(L"Segoe UI", 12, Gdiplus::FontStyleRegular);
     Gdiplus::SolidBrush brushGray(Gdiplus::Color(255, 108, 117, 125));
 
-    CString strSub = L"Thông tin Căn cước công dân của quý khách đã được ghi nhận.\nHệ thống đang chuyển sang bước tiếp theo.";
+    CString strSub = L"Thông tin của quý khách đã được ghi nhận.\nHệ thống đang chuyển sang bước tiếp theo.";
     g.DrawString(strSub, 
                 -1, 
                 &fontSub,

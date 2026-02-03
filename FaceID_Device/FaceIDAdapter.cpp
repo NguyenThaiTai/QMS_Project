@@ -2,7 +2,11 @@
 #include "FaceIDAdapter.h"
 #include <process.h>
 
-FaceIDAdapter::FaceIDAdapter() { m_bIsScanning = false; }
+FaceIDAdapter::FaceIDAdapter() { 
+    m_bIsScanning = false; 
+    m_hThread = nullptr;
+}
+
 FaceIDAdapter::~FaceIDAdapter() { Release(); }
 
 bool FaceIDAdapter::Initialize() {
@@ -12,21 +16,28 @@ bool FaceIDAdapter::Initialize() {
 void FaceIDAdapter::StartScanning() {
     if (m_bIsScanning) return;
     m_bIsScanning = true;
-    _beginthreadex(NULL, 0, &FaceIDAdapter::FaceIDThreadProc, this, 0, NULL);
+    m_hThread = (void*)_beginthreadex(NULL, 0, &FaceIDAdapter::FaceIDThreadProc, this, 0, NULL);
 }
 
 void FaceIDAdapter::StopScanning() { m_bIsScanning = false; }
 
 void FaceIDAdapter::Release() {
     StopScanning();
+
+    if (m_hThread) {
+        WaitForSingleObject(m_hThread, INFINITE);
+        CloseHandle(m_hThread);
+        m_hThread = nullptr;
+    }
+
     if (m_pListener) m_pListener->OnDeviceDisconnected();
 }
 
-unsigned int __stdcall FaceIDAdapter::FaceIDThreadProc(void* pParam)
+unsigned int __stdcall FaceIDAdapter::FaceIDThreadProc(void* pParam)    
 {
     FaceIDAdapter* pThis = (FaceIDAdapter*)pParam;
 
-    Sleep(3000);
+    Sleep(2000);
 
     if (pThis->m_bIsScanning && pThis->m_pListener)
     {

@@ -1,11 +1,12 @@
 ﻿#pragma once
 
-#include "InterfaceAdapterDevice.h" // Trỏ đúng đường dẫn về file Interface chung
+#include "InterfaceAdapterDevice.h" 
 
 class FaceIDAdapter : public IDeviceAdapter
 {
 private:
     bool m_bIsScanning;
+    void* m_hThread;
 
 public:
     FaceIDAdapter();

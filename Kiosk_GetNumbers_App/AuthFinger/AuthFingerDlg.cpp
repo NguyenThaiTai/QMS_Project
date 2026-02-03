@@ -62,8 +62,8 @@ BOOL AuthFingerDlg::OnInitDialog()
 			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
 		}
 	}
-	SetIcon(m_hIcon, TRUE);			// Set big icon
-	SetIcon(m_hIcon, FALSE);		// Set small icon
+	SetIcon(m_hIcon, TRUE);
+	SetIcon(m_hIcon, FALSE);
 
 	// add start set font NTTai 20260107
 	m_fontTitle.CreatePointFont(280, _T("Arial Bold"));
@@ -71,7 +71,7 @@ BOOL AuthFingerDlg::OnInitDialog()
 	m_fontStatus.CreatePointFont(110, _T("Arial Bold"));
 	// add end set font NTTai 20260107
 
-	m_pIconFinger = LoadPNGFromResource(IDB_PNG_FINGER); // add load finger icon NTTai 20260106
+	m_pIconFinger = Common::LoadPNGFromResource(IDB_PNG_FINGER); // add load finger icon NTTai 20260106
 
 	// add start draw header UI NTTai 20260501
 	CHeaderUI::SetFullScreen(this); // add set full screen NTTai 20260601
@@ -184,39 +184,6 @@ void AuthFingerDlg::OnTimer(UINT_PTR nIDEvent)
 	CDialogEx::OnTimer(nIDEvent);
 }
 
-Gdiplus::Image* AuthFingerDlg::LoadPNGFromResource(UINT nIDResource)
-{
-	HRSRC hRes = FindResource(AfxGetInstanceHandle(), MAKEINTRESOURCE(nIDResource), _T("PNG"));
-	if (!hRes) return nullptr;
-
-	DWORD dwSize = SizeofResource(AfxGetInstanceHandle(), hRes);
-	HGLOBAL hResData = LoadResource(AfxGetInstanceHandle(), hRes);
-	if (!hResData) return nullptr;
-
-	void* pBuffer = LockResource(hResData);
-	HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, dwSize);
-	if (!hMem) return nullptr;
-
-	void* pData = GlobalLock(hMem);
-	memcpy(pData, pBuffer, dwSize);
-	GlobalUnlock(hMem);
-
-	IStream* pStream = nullptr;
-	Gdiplus::Image* pFinalImg = nullptr;
-
-	if (CreateStreamOnHGlobal(hMem, TRUE, &pStream) == S_OK)
-	{
-		Gdiplus::Image* pTempImg = Gdiplus::Image::FromStream(pStream);
-		if (pTempImg && pTempImg->GetLastStatus() == Gdiplus::Ok)
-		{
-			pFinalImg = pTempImg->Clone();
-			delete pTempImg;
-		}
-		pStream->Release();
-	}
-	return pFinalImg;
-}
-
 // add start draw instruction title NTTai 20260106
 void AuthFingerDlg::DrawInstructions(Gdiplus::Graphics& g, int cx, int cy)
 {
@@ -264,7 +231,6 @@ void AuthFingerDlg::DrawFingerIcon(Gdiplus::Graphics& g, int cx, int cy)
 	float x = (float)cx - iconSize / 2.0f;
 	float y = (float)cy - iconSize / 2.0f;
 
-	// Agribank red matrix, preserve Alpha 1.0f for smooth edges
 	Gdiplus::ColorMatrix colorMatrix = {
 		0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -276,11 +242,10 @@ void AuthFingerDlg::DrawFingerIcon(Gdiplus::Graphics& g, int cx, int cy)
 	Gdiplus::ImageAttributes imAttr;
 	imAttr.SetColorMatrix(&colorMatrix, Gdiplus::ColorMatrixFlagsDefault, Gdiplus::ColorAdjustTypeBitmap);
 
-	// Offset array for 3-pass drawing (Center + side offsets)
 	Gdiplus::PointF offsets[] = {
-		{0.0f, 0.0f},    // Center
-		{-0.15f, 0.0f},  // Left offset
-		{0.15f, 0.0f}    // Right offset
+		{0.0f, 0.0f},
+		{-0.15f, 0.0f},
+		{0.15f, 0.0f}
 	};
 
 	for (int i = 0; i < 3; i++) {
