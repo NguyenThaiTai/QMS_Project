@@ -105,7 +105,8 @@ void DisplayNumbersDlg::OnLButtonUp(UINT nFlags, CPoint point)
     }
 
     if (m_rectPrintBtn.Contains(p)) {
-        MessageBox(L"Đang in phiếu ...");
+		TicketPrinter::Print(m_strTicketNumber, m_serviceTitle); // add start print ticket function NTTai 20260210
+        EndDialog(IDOK);
     }
     m_bPrintPressed = false;
     m_bFinishPressed = false;

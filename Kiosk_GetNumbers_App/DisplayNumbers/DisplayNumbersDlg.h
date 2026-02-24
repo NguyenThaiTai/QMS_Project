@@ -4,6 +4,7 @@
 #include "../resource.h" 
 #include "../Common/ButtonUI.h"
 #include "../Common/HeaderUI.h"
+#include "../TicketPrinter/TicketPrinter.h"
 
 class DisplayNumbersDlg : public CDialogEx
 {

@@ -37,7 +37,7 @@ unsigned int __stdcall FaceIDAdapter::FaceIDThreadProc(void* pParam)
 {
     FaceIDAdapter* pThis = (FaceIDAdapter*)pParam;
 
-    Sleep(2000);
+    //Sleep(2000);
 
     if (pThis->m_bIsScanning && pThis->m_pListener)
     {
@@ -45,7 +45,7 @@ unsigned int __stdcall FaceIDAdapter::FaceIDThreadProc(void* pParam)
         faceData.strFullName = L"Hột lu FACE ID";
         faceData.strIDNumber = L"083203001509";
 
-        pThis->m_pListener->OnScanSuccess(faceData);
+        //pThis->m_pListener->OnScanSuccess(faceData);
     }
 
     pThis->m_bIsScanning = false;

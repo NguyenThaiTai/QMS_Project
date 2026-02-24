@@ -42,7 +42,10 @@ private:
     bool m_bContinuePressed = false; // add continue button pressed state NTTai 20260114
     bool m_bIsNewCustomer; // add new customer flag NTTai 20260114
     CitizenCardData m_authData; // add authenticated data storage NTTai 20260114
+        
+	bool m_bAutoRedirect; // add auto redirect flag NTTai 20260203
 
 public:
     void SetAuthData(const CitizenCardData& data) { m_authData = data; } // add set authenticated data method NTTai 20260114
+	void DisableAutoRedirect() { m_bAutoRedirect = false; } // add disable auto redirect method NTTai 20260203
 };

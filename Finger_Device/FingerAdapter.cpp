@@ -38,7 +38,7 @@ unsigned int __stdcall FingerAdapter::FingerThreadProc(void* pParam)
 {
     FingerAdapter* pThis = (FingerAdapter*)pParam;
 
-    Sleep(2000);
+    //Sleep(2000);
 
     if (pThis->m_bIsScanning && pThis->m_pListener)
     {
@@ -47,7 +47,7 @@ unsigned int __stdcall FingerAdapter::FingerThreadProc(void* pParam)
         fingerData.strFullName = L"NGUYỄN VĂN FINGER";
         fingerData.strIDNumber = L"083203001509";
 
-        pThis->m_pListener->OnScanSuccess(fingerData);
+        //pThis->m_pListener->OnScanSuccess(fingerData);
     }
 
     pThis->m_bIsScanning = false;

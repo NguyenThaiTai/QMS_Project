@@ -174,13 +174,14 @@ void FaceOptionDlg::OnLButtonUp(UINT nFlags, CPoint point)
 
     if (m_rectOptNew.Contains(p) && m_bNewPressed) {
         AuthIDCardDlg dlg;
+        dlg.SetFaceRegisterMode(true);
         dlg.DoModal();
-        EndDialog(IDCANCEL);
+        //EndDialog(IDCANCEL);
     }
     else if (m_rectOptExist.Contains(p) && m_bExistPressed) {   
         AuthFaceIDDlg dlg; 
         dlg.DoModal();
-        EndDialog(IDCANCEL);
+        //EndDialog(IDCANCEL);
     }
     else if (m_rectBack.Contains(p)) {
         EndDialog(IDCANCEL);

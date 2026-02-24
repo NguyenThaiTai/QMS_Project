@@ -17,15 +17,16 @@ END_MESSAGE_MAP()
 
 AuthIDCardDlg::AuthIDCardDlg(CWnd* pParent)
     : CDialogEx(IDD_AUTH_ID_DIALOG, pParent)
-{
+{ 
     m_pIconIDCard = nullptr;
     m_fScanPos = 0.0f;
     m_bScanDown = true;
     m_bTestBtnPressed = false;
     m_bDeleteBtnPressed = false;
-    m_eCurrentState = STATE_WAITING_CARD; // add init default state to waiting NTTai 20260114
     m_fProgressVal = 0.0f;
     m_bProgressIncreasing = true;
+	m_bForFingerRegister = false; // add init finger registration flag NTTai 20260203
+	m_bForFaceRegister = false; // add init face ID registration flag NTTai 20260203
 }
 
 AuthIDCardDlg::~AuthIDCardDlg()
@@ -55,26 +56,31 @@ BOOL AuthIDCardDlg::OnInitDialog()
         AfxMessageBox(L"Lỗi: Không tìm thấy file Driver thiết bị (.dll)!");
     }
 
-    //StartScanProcess();
+	// add start auth state manager registration NTTai 20260210
+    AuthStateManager::GetInstance()->RegisterObserver(this);
+    AuthStateManager::GetInstance()->Reset();
+    // add end auth state manager registration NTTai 20260210
+    
+	//StartScanProcess(); For real device, scanning starts when device notifies connection
 	// add end device adapter initialization NTTai 20260130
 
     return TRUE;
 }
 
 // add start set auth state helper NTTai 20260114
-void AuthIDCardDlg::SetAuthState(AuthState state)
-{
-    m_eCurrentState = state;
-    if (state == STATE_PROCESSING) {
-        m_fProgressVal = 0.0f;
-        m_bProgressIncreasing = true;
-        SetTimer(3, 40, NULL);
-    }
-    else {
-        KillTimer(3);
-    }
-    Invalidate(FALSE);
-}
+//void AuthIDCardDlg::SetAuthState(AuthState state)
+//{
+//    m_eCurrentState = state;
+//    if (state == STATE_PROCESSING) {
+//        m_fProgressVal = 0.0f;
+//        m_bProgressIncreasing = true;
+//        SetTimer(3, 40, NULL);
+//    }
+//    else {
+//        KillTimer(3);
+//    }
+//    Invalidate(FALSE);
+//}
 // add end set auth state helper NTTai 20260114
 
 void AuthIDCardDlg::OnPaint()
@@ -98,13 +104,16 @@ void AuthIDCardDlg::OnPaint()
     int cx = rect.Width() / 2;
     int cy = rect.Height() / 2 + 60;
 
-    DrawInstructions(g, cx, cy);
+    AuthState currentState = AuthStateManager::GetInstance()->GetState(); // add get current auth state from manager NTTai 20260210
+
+    DrawInstructions(g, cx, cy, currentState);
     DrawIDCardGraphic(g, cx, cy);
-    if (m_eCurrentState == STATE_PROCESSING) {
+
+    if (currentState == STATE_SCANNING || currentState == STATE_VERIFYING) {
         DrawProgressBar(g, cx, cy);
     }
-    DrawStatusBox(g, cx, cy);
-    if (m_eCurrentState == STATE_WAITING_CARD) {
+    DrawStatusBox(g, cx, cy, currentState);
+    if (currentState == STATE_WAITING_SCAN) {
         CButtonUI::DrawCancelButton(g, cx, cy + 30, m_rectCancelBtn);
         DrawTestButton(g, cx, cy);
         DrawDeleteButton(g, cx, cy);
@@ -116,55 +125,71 @@ void AuthIDCardDlg::OnPaint()
     memDC.SelectObject(pOldBmp);
 }
 
-// add start draw instructions based on state NTTai 20260114
-void AuthIDCardDlg::DrawInstructions(Gdiplus::Graphics& g, int cx, int cy)
+// add start draw instructions based on state NTTai 20260210
+void AuthIDCardDlg::DrawInstructions(Gdiplus::Graphics& g, int cx, int cy, AuthState state)
 {
-    Gdiplus::StringFormat format; format.SetAlignment(Gdiplus::StringAlignmentCenter);
-
-    // Dark red brush for processing title
-    Gdiplus::SolidBrush titleBrush(Gdiplus::Color(255, 162, 32, 45));
-    Gdiplus::SolidBrush blackBrush(Gdiplus::Color(255, 0, 0, 0));
+    Gdiplus::StringFormat format;
+    format.SetAlignment(Gdiplus::StringAlignmentCenter);
 
     Gdiplus::Font fontTitle(L"Segoe UI", 32, Gdiplus::FontStyleBold);
-
-    if (m_eCurrentState == STATE_WAITING_CARD) {
-        g.DrawString(L"Vui lòng đặt căn cước công dân của bạn", 
-                    -1, 
-                    &fontTitle, 
-                    Gdiplus::PointF((float)cx, (float)cy - 340), 
-                    &format, 
-                    &blackBrush);
-    }
-    else {
-        g.DrawString(L"Đang xác thực thông tin...", 
-                    -1, 
-                    &fontTitle, 
-                    Gdiplus::PointF((float)cx, (float)cy - 340), 
-                    &format, 
-                    &titleBrush);
-    }
-
     Gdiplus::Font fontSub(L"Segoe UI", 13, Gdiplus::FontStyleRegular);
-    Gdiplus::SolidBrush subBrush(Gdiplus::Color(255, 80, 80, 80));
 
-    if (m_eCurrentState == STATE_WAITING_CARD) {
-        g.DrawString(L"Hệ thống sẽ tự động quét và nhận diện thông tin từ thẻ của quý khách", 
-            -1, 
-            &fontSub, 
-            Gdiplus::PointF((float)cx, (float)cy - 250), 
-            &format, 
-            &subBrush);
-    }
-    else {
-        g.DrawString(L"Hệ thống đang kiểm tra tính hợp lệ của Căn cước công dân",
-                    -1, 
-                    &fontSub, 
-                    Gdiplus::PointF((float)cx, (float)cy - 250), 
-                    &format, 
-                    &subBrush);
-    }
+    Gdiplus::SolidBrush blackBrush(Gdiplus::Color(255, 0, 0, 0));        
+	Gdiplus::SolidBrush redBrush(Gdiplus::Color(255, 162, 32, 45));
+    Gdiplus::SolidBrush grayBrush(Gdiplus::Color(255, 80, 80, 80));
+
+    CString strTitle;
+    CString strSub;
+    Gdiplus::Brush* pTitleBrush = &blackBrush;
+
+    switch (state)
+    {
+    case STATE_WAITING_SCAN:
+        strTitle = L"Vui lòng đặt căn cước công dân của bạn";
+        strSub = L"Hệ thống sẽ tự động quét và nhận diện thông tin từ thẻ của quý khách";
+        pTitleBrush = &blackBrush;
+        break;
+
+    case STATE_SCANNING:
+        strTitle = L"Đang xác thực thông tin...";
+        strSub = L"Vui lòng giữ nguyên thẻ trên đầu đọc và không di chuyển";
+        pTitleBrush = &redBrush;
+        break;
+
+    case STATE_VERIFYING:
+        strTitle = L"Đang kiểm tra dữ liệu...";
+        strSub = L"Hệ thống đang kiểm tra tính hợp lệ và đối chiếu Căn cước công dân";
+        pTitleBrush = &redBrush;
+        break;
+
+    case STATE_SUCCESS:
+        strTitle = L"Xác thực thành công!";
+        strSub = L"Thông tin hợp lệ. Đang chuyển hướng...";
+        pTitleBrush = &redBrush;
+        break;
+
+    case STATE_ERROR:
+        strTitle = L"Có lỗi xảy ra...";
+        strSub = L"Không thể đọc thẻ hoặc dữ liệu không hợp lệ. Vui lòng thử lại.";
+        pTitleBrush = &redBrush;
+        break;
+
+    default:
+        strTitle = L"Vui lòng thử lại";
+        strSub = L"Đã hết thời gian chờ, vui lòng thao tác lại.";
+        pTitleBrush = &blackBrush;
+        break;
+    }           
+
+    g.DrawString(strTitle, -1, &fontTitle,
+        Gdiplus::PointF((float)cx, (float)cy - 340),
+        &format, pTitleBrush);
+
+    g.DrawString(strSub, -1, &fontSub,
+        Gdiplus::PointF((float)cx, (float)cy - 250),
+        &format, &grayBrush);
 }
-// add end draw instructions based on state NTTai 20260114
+// add end draw instructions based on state NTTai 20260210
 
 void AuthIDCardDlg::DrawIDCardGraphic(Gdiplus::Graphics& g, int cx, int cy)
 {
@@ -262,67 +287,113 @@ void AuthIDCardDlg::DrawProgressBar(Gdiplus::Graphics& g, int cx, int cy)
 // add end draw progress bar NTTai 20260114
 
 // add start draw status box NTTai 20260114
-void AuthIDCardDlg::DrawStatusBox(Gdiplus::Graphics& g, int cx, int cy)
+void AuthIDCardDlg::DrawStatusBox(Gdiplus::Graphics& g, int cx, int cy, AuthState state)
 {
     Gdiplus::RectF boxRect((float)cx - 240, (float)cy + 220, 480.0f, 100.0f);
-    Gdiplus::GraphicsPath path; CButtonUI::AddRoundedRectToPath(path, boxRect, 12.0f);
+    Gdiplus::GraphicsPath path;
+    CButtonUI::AddRoundedRectToPath(path, boxRect, 12.0f);
 
-    if (m_eCurrentState == STATE_WAITING_CARD) {
-        g.FillPath(&Gdiplus::SolidBrush(Gdiplus::Color::White), &path);
-        g.DrawPath(&Gdiplus::Pen(Gdiplus::Color(255, 240, 240, 240), 1.0f), &path);
-    }
-    else {
-        g.FillPath(&Gdiplus::SolidBrush(Gdiplus::Color(255, 255, 250, 250)), &path);
-        g.DrawPath(&Gdiplus::Pen(Gdiplus::Color(255, 250, 200, 200), 1.0f), &path);
-    }
-
-    // Change Left Icon
-    Gdiplus::RectF iconRect(boxRect.X + 20.0f, boxRect.Y + 35.0f, 30.0f, 30.0f);
-    if (m_eCurrentState == STATE_WAITING_CARD) {
-        Gdiplus::SolidBrush agriRedBrush(Gdiplus::Color(255, 162, 32, 45));
-        g.FillEllipse(&agriRedBrush, iconRect);
-    }
-    else {
-        // Loading Icon
-        Gdiplus::SolidBrush lightRedBrush(Gdiplus::Color(255, 255, 235, 235));
-        g.FillEllipse(&lightRedBrush, iconRect);
-
-        Gdiplus::Pen penRefresh(Gdiplus::Color(255, 162, 32, 45), 2.0f);
-        g.DrawArc(&penRefresh,
-            Gdiplus::REAL(iconRect.X + 8),
-            Gdiplus::REAL(iconRect.Y + 8),
-            Gdiplus::REAL(14),
-            Gdiplus::REAL(14), 0, 270);
-        g.DrawLine(&penRefresh, iconRect.X + 22, iconRect.Y + 8, iconRect.X + 22, iconRect.Y + 12);
-    }
-
-    // Change Content Text
-    Gdiplus::RectF textTitleRect(boxRect.X + 65, boxRect.Y + 20, 395.0f, 30.0f);
-    Gdiplus::RectF textDescRect(boxRect.X + 65, boxRect.Y + 50, 395.0f, 65.0f);
     Gdiplus::Font fontTitle(L"Segoe UI", 13, Gdiplus::FontStyleBold);
     Gdiplus::Font fontDesc(L"Segoe UI", 10, Gdiplus::FontStyleRegular);
-    Gdiplus::StringFormat format; format.SetAlignment(Gdiplus::StringAlignmentNear); format.SetLineAlignment(Gdiplus::StringAlignmentNear);
+    Gdiplus::StringFormat format;
+    format.SetAlignment(Gdiplus::StringAlignmentNear);
+    format.SetLineAlignment(Gdiplus::StringAlignmentNear);
 
-    if (m_eCurrentState == STATE_WAITING_CARD) {
-        g.DrawString(L"Đặt thẻ CCCD lên đầu đọc", -1, &fontTitle, textTitleRect, &format, &Gdiplus::SolidBrush(Gdiplus::Color(255, 30, 30, 30)));
-        g.DrawString(L"Vui lòng giữ thẻ cố định cho đến khi đèn tín hiệu chuyển sang màu xanh.", -1, &fontDesc, textDescRect, &format, &Gdiplus::SolidBrush(Gdiplus::Color(255, 100, 100, 100)));
+    Gdiplus::RectF textTitleRect(boxRect.X + 65, boxRect.Y + 20, 395.0f, 30.0f);
+    Gdiplus::RectF textDescRect(boxRect.X + 65, boxRect.Y + 50, 395.0f, 65.0f);
+
+    Gdiplus::SolidBrush textBrush(Gdiplus::Color(255, 30, 30, 30));
+    Gdiplus::SolidBrush descBrush(Gdiplus::Color(255, 100, 100, 100));
+
+    Gdiplus::Color boxFillColor;
+    Gdiplus::Color boxBorderColor;
+    Gdiplus::Color iconColor;
+
+    CString strTitle;
+    CString strDesc;
+    bool bShowLoadingIcon = false; // Cờ để vẽ icon xoay
+    bool bShowCheckIcon = false;   // Cờ để vẽ dấu tích xanh
+
+    switch (state)
+    {
+    case STATE_WAITING_SCAN:
+        boxFillColor = Gdiplus::Color::White;
+        boxBorderColor = Gdiplus::Color(255, 240, 240, 240);
+        iconColor = Gdiplus::Color(255, 162, 32, 45); // Đỏ Agribank
+
+        strTitle = L"Đặt thẻ CCCD lên đầu đọc";
+        strDesc = L"Vui lòng giữ thẻ cố định cho đến khi đèn tín hiệu chuyển sang màu xanh.";
+        break;
+
+    case STATE_SCANNING:
+        boxFillColor = Gdiplus::Color(255, 255, 250, 250);
+        boxBorderColor = Gdiplus::Color(255, 250, 200, 200);
+        iconColor = Gdiplus::Color(255, 255, 235, 235); // Nền icon nhạt
+
+        strTitle = L"Đang đọc thông tin chip...";
+        strDesc = L"Vui lòng không rút thẻ ra khỏi đầu đọc cho đến khi quá trình hoàn tất.";
+        bShowLoadingIcon = true;
+        break;
+
+    case STATE_VERIFYING:
+        boxFillColor = Gdiplus::Color(255, 245, 250, 255);
+        boxBorderColor = Gdiplus::Color(255, 200, 220, 250);
+        iconColor = Gdiplus::Color(255, 235, 240, 255);
+
+        strTitle = L"Đang kiểm tra dữ liệu...";
+        strDesc = L"Hệ thống đang đối soát thông tin của bạn với cơ sở dữ liệu.";
+        bShowLoadingIcon = true;
+        break;
+
+    case STATE_SUCCESS:
+        boxFillColor = Gdiplus::Color(255, 240, 255, 240);
+        boxBorderColor = Gdiplus::Color(255, 150, 200, 150);
+        iconColor = Gdiplus::Color(255, 40, 167, 69);
+
+        strTitle = L"Đọc thẻ thành công!";
+        strDesc = L"Dữ liệu hợp lệ. Đang chuyển hướng...";
+        bShowCheckIcon = true;
+        break;
+
+    case STATE_ERROR:
+        boxFillColor = Gdiplus::Color(255, 255, 245, 245);
+        boxBorderColor = Gdiplus::Color(255, 255, 100, 100);
+        iconColor = Gdiplus::Color(255, 220, 53, 69); // Đỏ Error
+
+        strTitle = AuthStateManager::GetInstance()->GetErrorMessage();
+        if (strTitle.IsEmpty()) strTitle = L"Không thể đọc thẻ";
+        strDesc = L"Vui lòng kiểm tra lại thiết bị hoặc thẻ và thử lại.";
+        break;
+
+    default:
+        boxFillColor = Gdiplus::Color::White;
+        boxBorderColor = Gdiplus::Color::Gray;
+        iconColor = Gdiplus::Color::Gray;
+        strTitle = L"...";
+        break;
     }
-    else {
-        g.DrawString(L"Đang đọc thông tin chip",
-            -1,
-            &fontTitle,
-            textTitleRect,
-            &format,
-            &Gdiplus::SolidBrush(Gdiplus::Color(255, 30, 30, 30)));
-        g.DrawString(L"Vui lòng không rút thẻ ra khỏi đầu đọc cho đến khi quá trình hoàn tất",
-            -1,
-            &fontDesc,
-            textDescRect,
-            &format,
-            &Gdiplus::SolidBrush(Gdiplus::Color(255, 100, 100, 100)));
+
+    g.FillPath(&Gdiplus::SolidBrush(boxFillColor), &path);
+    g.DrawPath(&Gdiplus::Pen(boxBorderColor, 1.0f), &path);
+
+    Gdiplus::RectF iconRect(boxRect.X + 20.0f, boxRect.Y + 35.0f, 30.0f, 30.0f);
+    g.FillEllipse(&Gdiplus::SolidBrush(iconColor), iconRect);
+
+    if (bShowLoadingIcon) {
+        Gdiplus::Pen penRefresh(Gdiplus::Color(255, 162, 32, 45), 2.0f);
+        g.DrawArc(&penRefresh, Gdiplus::REAL(iconRect.X + 8), Gdiplus::REAL(iconRect.Y + 8), 14.0f, 14.0f, 0, 270);
+        g.DrawLine(&penRefresh, iconRect.X + 22, iconRect.Y + 8, iconRect.X + 22, iconRect.Y + 12);
     }
+    else if (bShowCheckIcon) {
+        Gdiplus::Pen penCheck(Gdiplus::Color::White, 2.5f);
+        g.DrawLine(&penCheck, iconRect.X + 8, iconRect.Y + 15, iconRect.X + 13, iconRect.Y + 20);
+        g.DrawLine(&penCheck, iconRect.X + 13, iconRect.Y + 20, iconRect.X + 22, iconRect.Y + 10);
+    }
+
+    g.DrawString(strTitle, -1, &fontTitle, textTitleRect, &format, &textBrush);
+    g.DrawString(strDesc, -1, &fontDesc, textDescRect, &format, &descBrush);
 }
-// add end draw status box NTTai 20260114
+// add end draw status box NTTai 20260210
 
 // add start draw loading footer NTTai 20260114
 void AuthIDCardDlg::DrawLoadingFooter(Gdiplus::Graphics& g, int cx, int cy)
@@ -337,7 +408,7 @@ void AuthIDCardDlg::DrawLoadingFooter(Gdiplus::Graphics& g, int cx, int cy)
     g.FillPath(&Gdiplus::SolidBrush(Gdiplus::Color::White), &path);
 
     Gdiplus::StringFormat format;
-    format.SetAlignment(Gdiplus::StringAlignmentCenter);
+    format.SetAlignment(Gdiplus::StringAlignmentCenter);    
     format.SetLineAlignment(Gdiplus::StringAlignmentCenter);
     Gdiplus::Font font(L"Segoe UI", 12, Gdiplus::FontStyleBold);
     g.DrawString(L"Đang xác thực (Vui lòng đợi)", -1, &font, btnRect, &format, &Gdiplus::SolidBrush(Gdiplus::Color(255, 150, 150, 150))); // Gray text
@@ -372,7 +443,7 @@ void AuthIDCardDlg::OnTimer(UINT_PTR nIDEvent)
         }
     }
 
-    if (nIDEvent == 3) {
+    else if (nIDEvent == 3) {
         float step = 1.2f;
         if (m_bProgressIncreasing) {
             m_fProgressVal += step;
@@ -396,6 +467,12 @@ void AuthIDCardDlg::OnTimer(UINT_PTR nIDEvent)
 
         InvalidateRect(&rProg, FALSE);
     }
+
+    else if (nIDEvent == 4) {
+        KillTimer(4);
+        AuthStateManager::GetInstance()->Reset(); // Gọi Singleton để reset
+    }
+
     CDialogEx::OnTimer(nIDEvent);
 }
 
@@ -403,7 +480,7 @@ void AuthIDCardDlg::OnTimer(UINT_PTR nIDEvent)
 // add start start scan process logic NTTai 20260114
 void AuthIDCardDlg::StartScanProcess()
 {
-    SetAuthState(STATE_PROCESSING);
+	AuthStateManager::GetInstance()->SetState(STATE_SCANNING); // add set global state NTTai 20260210
     //AfxBeginThread(ScanThreadProc, this);
 	if (m_pDevice) m_pDevice->StartScanning(); // add start real scanning process NTTai 20260130
 }
@@ -411,7 +488,8 @@ void AuthIDCardDlg::StartScanProcess()
 
 void AuthIDCardDlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
-    if (m_eCurrentState == STATE_PROCESSING) return;
+    AuthState state = AuthStateManager::GetInstance()->GetState();
+    if (state == STATE_SCANNING || state == STATE_VERIFYING) return;
 
     Gdiplus::PointF p((float)point.x, (float)point.y);
 
@@ -437,7 +515,10 @@ void AuthIDCardDlg::OnLButtonUp(UINT nFlags, CPoint point)
 
 void AuthIDCardDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
-    if (m_eCurrentState == STATE_PROCESSING) return;
+	// add start prevent button press during scanning NTTai 20260210 
+    AuthState state = AuthStateManager::GetInstance()->GetState();
+    if (state == STATE_SCANNING || state == STATE_VERIFYING) return;
+	// add end prevent button press during scanning NTTai 20260210
 
     Gdiplus::PointF p((float)point.x, (float)point.y);
 
@@ -457,8 +538,6 @@ void AuthIDCardDlg::OnLButtonDown(UINT nFlags, CPoint point)
 
 LRESULT AuthIDCardDlg::OnScanComplete(WPARAM wParam, LPARAM lParam)
 {
-    SetAuthState(STATE_WAITING_CARD);
-
     if (wParam == 1) {
         CitizenCardData* pData = (CitizenCardData*)lParam;
         if (pData) {
@@ -481,20 +560,46 @@ LRESULT AuthIDCardDlg::OnScanComplete(WPARAM wParam, LPARAM lParam)
                 db.CloseDB();
             }
 
+			AuthStateManager::GetInstance()->SetState(STATE_VERIFYING); // add set global state NTTai 20260210
+
             if (bSaveOK) {
-                AuthCorrect dlgCorrect(pData->strFullName, false, this);
-                dlgCorrect.SetAuthData(m_scannedData);
+				AuthStateManager::GetInstance()->SetState(STATE_SUCCESS); // add set global state NTTai 20260210
+
+				// add start show correction dialog NTTai 20260203  
+                AuthCorrect dlgCorrect(pData->strFullName, bIsNew, this);
+                dlgCorrect.SetAuthData(*pData);
+                if (m_bForFingerRegister || m_bForFaceRegister) {
+                    dlgCorrect.DisableAutoRedirect();
+                }
                 dlgCorrect.DoModal();
-                EndDialog(IDOK);
+                EndDialog(IDCANCEL);
+				if (m_bForFingerRegister) { // add finger registration flow NTTai 20260203
+                    //EndDialog(IDCANCEL);
+                    AuthFingerDlg dlgFinger;
+					dlgFinger.SetRegisterMode(true); // add set finger register mode NTTai 20260203
+                    dlgFinger.DoModal();
+                }
+                else if (m_bForFaceRegister) { // add face ID registration flow NTTai 20260203
+                    //EndDialog(IDCANCEL);
+                    AuthFaceIDDlg dlg;
+					dlg.SetRegisterMode(true); // add set face ID register mode NTTai 20260203
+                    dlg.DoModal();
+                }
+                else {
+                    EndDialog(IDOK);
+                }
+				// add end show correction dialog NTTai 20260203
             }
             else {
-                AfxMessageBox(L"Lỗi: Không thể lưu thông tin vào hệ thống!");
+				AuthStateManager::GetInstance()->SetState(STATE_ERROR, L"Lỗi lưu DB"); // add set global state NTTai 20260210
+                //AfxMessageBox(L"Lỗi: Không thể lưu thông tin vào hệ thống!");
             }
             delete pData;
         }
     }
     else {
-        AfxMessageBox(L"Lỗi đọc thẻ! Vui lòng thử lại.");
+        AuthStateManager::GetInstance()->SetState(STATE_ERROR, L"Lỗi đọc thẻ");
+        //AfxMessageBox(L"Lỗi đọc thẻ! Vui lòng thử lại.");
     }
     return 0;
 }
@@ -589,6 +694,7 @@ void AuthIDCardDlg::OnDestroy() {
         delete m_pDevice;
         m_pDevice = nullptr;
     }
+	AuthStateManager::GetInstance()->UnregisterObserver(this); // add unregister auth state manager NTTai 20260210
     CDialogEx::OnDestroy();
 }
 
@@ -611,3 +717,29 @@ void AuthIDCardDlg::OnDeviceDisconnected() {
 
 }
 // add end device listener implementations NTTai 20260130
+
+void AuthIDCardDlg::OnAuthStateChanged(AuthState newState, CString strMessage)
+{
+    // Xử lý Timer giao diện dựa trên State mới
+    KillTimer(3); // Progress bar
+    KillTimer(4); // Error reset
+
+    switch (newState)
+    {
+    case STATE_WAITING_SCAN:
+        m_fProgressVal = 0.0f;
+        break;
+    case STATE_SCANNING:
+        m_fProgressVal = 0.0f;
+        m_bProgressIncreasing = true;
+        SetTimer(3, 40, NULL);
+        break;
+    case STATE_VERIFYING:
+        m_fProgressVal = 100.0f;
+        break;
+    case STATE_ERROR:
+        SetTimer(4, 3000, NULL); // Auto reset sau 3s
+        break;
+    }
+    Invalidate(FALSE);
+}

@@ -13,6 +13,93 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\AuthStateManager">
+      <UniqueIdentifier>{6e8d6309-eca5-4a7f-a9db-d5b65fa60209}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AuthStateManager">
+      <UniqueIdentifier>{11a17bcf-bdac-4945-9724-1a8f6d3b9d64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AuthSuccessDialog">
+      <UniqueIdentifier>{b6d4f30d-7922-4515-b934-39ce6438769c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AuthSuccessDialog">
+      <UniqueIdentifier>{3e6a181b-6114-4d78-8d03-3d0bfcaec829}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AuthFingerDialog">
+      <UniqueIdentifier>{cf17d72d-c0b5-484b-8438-46e093de874a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AuthFingerDialog">
+      <UniqueIdentifier>{b994df8a-a9e3-4562-b694-787c274422da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AuthFaceIDDialog">
+      <UniqueIdentifier>{14fbb081-beff-43e6-a564-eac64902fe36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AuthIDCardDialog">
+      <UniqueIdentifier>{a540e072-b6ca-4133-86ff-32e13dea4971}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AuthFaceIDDialog">
+      <UniqueIdentifier>{b50db432-7476-4369-bf7e-61a4f81db234}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AuthIDCardDialog">
+      <UniqueIdentifier>{4eda20f2-ce6d-4973-ad29-5114fac663c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AuthQRCodeDialog">
+      <UniqueIdentifier>{3e752900-eacd-4217-b3f9-2b75b74ada6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AuthQRCodeDialog">
+      <UniqueIdentifier>{3f5cfbbb-24e4-418a-910f-02af2c329af7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common">
+      <UniqueIdentifier>{5f2700b1-5060-4efe-848c-47316a6e9799}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Common">
+      <UniqueIdentifier>{258bc397-8676-4e39-82cd-353bb5446230}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\API">
+      <UniqueIdentifier>{401c8301-1026-4538-8160-789853298a3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\API">
+      <UniqueIdentifier>{18d29d5b-b1ed-4992-9f4a-07be1896a117}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ConfigManager">
+      <UniqueIdentifier>{12891502-9a75-49d8-a232-3272eb9a6e44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ConfigManager">
+      <UniqueIdentifier>{9e5746bc-01ae-4a2d-8aa6-0cb918e0451e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DatabaseManager">
+      <UniqueIdentifier>{a1bafda3-5fd5-4259-b71e-ddba0725ee64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DatabaseManager">
+      <UniqueIdentifier>{5591cb94-5e7c-434c-8938-6cbcaaef0de9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\MainDialog">
+      <UniqueIdentifier>{500b0baa-3747-49ee-ac49-eb9c11f96430}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\MainDialog">
+      <UniqueIdentifier>{d540560a-335f-4ad3-a5bb-da9444824097}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DisplayNumbers">
+      <UniqueIdentifier>{57b0368f-f6fa-4892-a587-e4c794b2c93c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DisplayNumbers">
+      <UniqueIdentifier>{fbbed9b4-9ec5-42a9-baea-d45bc84018be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NoAuthDialog">
+      <UniqueIdentifier>{57ba2601-f154-4f63-ab78-5707762f3410}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NoAuthDialog">
+      <UniqueIdentifier>{15008dd0-4a4f-4f38-8c4f-71733d2c2668}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TicketPrinter">
+      <UniqueIdentifier>{3e0f67d0-6f2f-4bd1-829d-2b165ccf4af8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\TicketPrinter">
+      <UniqueIdentifier>{b918fa4a-c726-4ac7-bd72-e72231ce199f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Adapter">
+      <UniqueIdentifier>{d0833d4e-90ad-4be5-ad55-31d1be5aa9af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Kiosk_GetNumbers_App.h">
@@ -30,71 +117,77 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DatabaseManager\DatabaseManager.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Common\AuthStateManager\AuthStateManager.h">
+      <Filter>Header Files\AuthStateManager</Filter>
     </ClInclude>
-    <ClInclude Include="DatabaseManager\sqlite3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\Common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AuthFaceID\AuthFaceIDDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AuthQRCode\AuthQRCodeDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AuthQRCode\qrcodegen.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\ButtonUI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\HeaderUI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DisplayNumbers\DisplayNumbersDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\AppMessages.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ConfigManagement\ConfigManagement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MainScreen\AuthScreen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MainScreen\Kiosk_GetNumbers_AppDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="API\ApiService.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NoAuth\NoAuthDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Interface\Common\InterfaceAdapterDevice.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Interface\Common\DeviceFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\AuthSuccess\AuthCorrect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AuthIDCard\AuthIDCardDlg.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Common\AuthSuccessDialog\AuthCorrect.h">
+      <Filter>Header Files\AuthSuccessDialog</Filter>
     </ClInclude>
     <ClInclude Include="AuthFinger\AuthFingerDlg.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\AuthFingerDialog</Filter>
     </ClInclude>
     <ClInclude Include="AuthFinger\FingerOptionDlg.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\AuthFingerDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="AuthFaceID\AuthFaceIDDlg.h">
+      <Filter>Header Files\AuthFaceIDDialog</Filter>
     </ClInclude>
     <ClInclude Include="AuthFaceID\FaceIDOptionsDlg.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\AuthFaceIDDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="AuthIDCard\AuthIDCardDlg.h">
+      <Filter>Header Files\AuthIDCardDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="AuthQRCode\AuthQRCodeDlg.h">
+      <Filter>Header Files\AuthQRCodeDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="AuthQRCode\qrcodegen.hpp">
+      <Filter>Header Files\AuthQRCodeDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\AppMessages.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ButtonUI.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Common.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\HeaderUI.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="API\ApiService.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigManagement\ConfigManagement.h">
+      <Filter>Header Files\ConfigManager</Filter>
+    </ClInclude>
+    <ClInclude Include="DatabaseManager\sqlite3.h">
+      <Filter>Header Files\DatabaseManager</Filter>
+    </ClInclude>
+    <ClInclude Include="DatabaseManager\DatabaseManager.h">
+      <Filter>Header Files\DatabaseManager</Filter>
+    </ClInclude>
+    <ClInclude Include="MainScreen\Kiosk_GetNumbers_AppDlg.h">
+      <Filter>Header Files\MainDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayNumbers\DisplayNumbersDlg.h">
+      <Filter>Header Files\DisplayNumbers</Filter>
+    </ClInclude>
+    <ClInclude Include="NoAuth\NoAuthDlg.h">
+      <Filter>Header Files\NoAuthDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="MainScreen\AuthScreen.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TicketPrinter\TicketPrinter.h">
+      <Filter>Header Files\TicketPrinter</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Common\DeviceFactory.h">
+      <Filter>Header Files\Adapter</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Common\InterfaceAdapterDevice.h">
+      <Filter>Header Files\Adapter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -104,62 +197,68 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DatabaseManager\DatabaseManager.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Common\AuthSuccessDialog\AuthCorrect.cpp">
+      <Filter>Source Files\AuthSuccessDialog</Filter>
     </ClCompile>
-    <ClCompile Include="DatabaseManager\sqlite3.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Common\AuthStateManager\AuthStateManager.cpp">
+      <Filter>Source Files\AuthStateManager</Filter>
     </ClCompile>
     <ClCompile Include="AuthFinger\AuthFingerDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AuthFaceID\AuthFaceIDDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AuthQRCode\AuthQRCodeDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AuthQRCode\qrcodegen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Common\ButtonUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Common\HeaderUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DisplayNumbers\DisplayNumbersDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ConfigManagement\ConfigManagement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MainScreen\AuthScreen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MainScreen\Kiosk_GetNumbers_AppDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="API\ApiService.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NoAuth\NoAuthDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Common\AuthSuccess\AuthCorrect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AuthIDCard\AuthIDCardDlg.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\AuthFingerDialog</Filter>
     </ClCompile>
     <ClCompile Include="AuthFinger\FingerOptionDlg.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\AuthFingerDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="AuthFaceID\AuthFaceIDDlg.cpp">
+      <Filter>Source Files\AuthFaceIDDialog</Filter>
     </ClCompile>
     <ClCompile Include="AuthFaceID\FaceIDOptionsDlg.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\AuthFaceIDDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="AuthIDCard\AuthIDCardDlg.cpp">
+      <Filter>Source Files\AuthIDCardDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="AuthQRCode\AuthQRCodeDlg.cpp">
+      <Filter>Source Files\AuthQRCodeDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="AuthQRCode\qrcodegen.cpp">
+      <Filter>Source Files\AuthQRCodeDialog</Filter>
     </ClCompile>
     <ClCompile Include="Common\Common.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\ButtonUI.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\HeaderUI.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="API\ApiService.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigManagement\ConfigManagement.cpp">
+      <Filter>Source Files\ConfigManager</Filter>
+    </ClCompile>
+    <ClCompile Include="DatabaseManager\DatabaseManager.cpp">
+      <Filter>Source Files\DatabaseManager</Filter>
+    </ClCompile>
+    <ClCompile Include="DatabaseManager\sqlite3.c">
+      <Filter>Source Files\DatabaseManager</Filter>
+    </ClCompile>
+    <ClCompile Include="MainScreen\Kiosk_GetNumbers_AppDlg.cpp">
+      <Filter>Source Files\MainDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="DisplayNumbers\DisplayNumbersDlg.cpp">
+      <Filter>Source Files\DisplayNumbers</Filter>
+    </ClCompile>
+    <ClCompile Include="NoAuth\NoAuthDlg.cpp">
+      <Filter>Source Files\NoAuthDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="MainScreen\AuthScreen.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TicketPrinter\TicketPrinter.cpp">
+      <Filter>Source Files\TicketPrinter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

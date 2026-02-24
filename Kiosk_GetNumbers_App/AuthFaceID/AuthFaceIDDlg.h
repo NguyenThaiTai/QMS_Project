@@ -9,12 +9,16 @@
 #include "../Interface/Common/InterfaceAdapterDevice.h"
 #include "../Interface/Common/DeviceFactory.h"
 // add end include hardware adapter classes NTTai 20260131
-#include "../Common/AuthSuccess/AuthCorrect.h" // add include auth success dialog NTTai 20260131
+#include "../Common/AuthSuccessDialog/AuthCorrect.h" // add include auth success dialog NTTai 20260131
 #include "../DatabaseManager/DatabaseManager.h" // add include database manager NTTai 20260131
+#include "../Common/AuthStateManager/AuthStateManager.h" // add include auth state manager NTTai 20260211
 
 #define WM_USER_FACEID_SCAN_COMPLETE (WM_USER + 101)
 
-class AuthFaceIDDlg : public CDialogEx, public IDeviceListener
+class AuthFaceIDDlg : 
+    public CDialogEx, 
+    public IDeviceListener,
+    public IAuthStateObserver
 {
     DECLARE_DYNAMIC(AuthFaceIDDlg) // add corrected class name NTTai 20260115
 
@@ -38,10 +42,12 @@ protected:
 
 private:
     // add start drawing modules for FaceID UI NTTai 20260115
-    void DrawInstructions(Gdiplus::Graphics& g, int cx, int cy);
-    void DrawFaceScannerGraphic(Gdiplus::Graphics& g, int cx, int cy);
-    void DrawStatusBox(Gdiplus::Graphics& g, int cx, int cy);
-    // add end drawing modules for FaceID UI NTTai 20260115
+    void DrawInstructions(Gdiplus::Graphics& g, int cx, int cy, AuthState state);
+    void DrawFaceScannerGraphic(Gdiplus::Graphics& g, int cx, int cy, AuthState state);
+    void DrawStatusBox(Gdiplus::Graphics& g, int cx, int cy, AuthState state);
+    // add end drawing modules for FaceID UI NTTai 20260115 
+
+	virtual void OnAuthStateChanged(AuthState newState, CString strMessage) override; // add implement auth state observer NTTai 20260211
 
     Gdiplus::RectF m_rectCancelBtn;
 
@@ -51,6 +57,8 @@ private:
     // add end animation variables for scanning beam NTTai 20260115
 
 	IDeviceAdapter* m_pDevice; // add device adapter instance NTTai 20260131
+	bool m_bRegisterMode; // add register mode flag NTTai 20260203
+	CitizenCardData m_scannedData; // add scanned data storage NTTai 20260211
 
 protected:
 	// add start implement IDeviceListener interface NTTai 20260131
@@ -59,4 +67,7 @@ protected:
     virtual void OnScanSuccess(const CitizenCardData& data) override;
     virtual void OnScanError(CString strError) override;
 	// add end implement IDeviceListener interface NTTai 20260131
+
+public:
+	void SetRegisterMode(bool bEnable) { m_bRegisterMode = bEnable; } // add set register mode method NTTai 20260203
 };

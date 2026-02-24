@@ -19,6 +19,7 @@ AuthCorrect::AuthCorrect(CString strFullName, bool bIsNewCustomer, CWnd* pParent
     m_strFullName = strFullName;
     m_bIsNewCustomer = bIsNewCustomer;
     m_nCountdown = 5;
+	m_bAutoRedirect = true; // add initialize auto redirect flag NTTai 20260203
 }
 
 AuthCorrect::~AuthCorrect() {}
@@ -30,9 +31,7 @@ BOOL AuthCorrect::OnInitDialog()
     CDialogEx::OnInitDialog();
     CHeaderUI::SetFullScreen(this);
 
-    // add start initialize timers for clock and auto-redirect NTTai 20260114
-    SetTimer(1, 1000, NULL); // Clock & Countdown timer (1 second interval)
-    // add end initialize timers for clock and auto-redirect NTTai 20260114
+    SetTimer(1, 1000, NULL); // add start initialize timers for clock and auto-redirect NTTai 20260114
 
     return TRUE;
 }
@@ -284,9 +283,12 @@ void AuthCorrect::OnTimer(UINT_PTR nIDEvent)
         else {
             // add start stop timer and transition to service selection NTTai 20260114
             KillTimer(1); // Stop timer to prevent recursive dialog calls
-            NoAuthDlg dlgService(this);
-            dlgService.SetAuthenticatedData(m_authData);
-            dlgService.DoModal();
+			if (m_bAutoRedirect == true) // add check auto redirect flag NTTai 20260203 
+            {
+                NoAuthDlg dlgService(this);
+                dlgService.SetAuthenticatedData(m_authData);
+                dlgService.DoModal();
+            }
             EndDialog(IDOK);
             // add end stop timer and transition to service selection NTTai 20260114
         }
@@ -315,10 +317,12 @@ void AuthCorrect::OnLButtonUp(UINT nFlags, CPoint point)
 
         // add start handle manual continue button click NTTai 20260114
 		KillTimer(1); //add ensure timer is stopped before manual transition NTTai 20260114
-        NoAuthDlg dlgService(this);
-        dlgService.SetAuthenticatedData(m_authData);
-        dlgService.DoModal();
-
+		if (m_bAutoRedirect == true) // add check auto redirect flag NTTai 20260203
+        {
+            NoAuthDlg dlgService(this);
+            dlgService.SetAuthenticatedData(m_authData);
+            dlgService.DoModal();
+        }
         EndDialog(IDOK);
         return;
         // add end handle manual continue button click NTTai 20260114

@@ -28,6 +28,7 @@ AuthFingerDlg::AuthFingerDlg(CWnd* pParent)
 	m_pIconFinger = nullptr;
 	m_fPulseAlpha = 50.0f;
 	m_bPulseGrowing = true;
+	m_bRegisterMode = false; // add init register mode flag NTTai 20260203
 }
 
 AuthFingerDlg::~AuthFingerDlg()
@@ -90,6 +91,10 @@ BOOL AuthFingerDlg::OnInitDialog()
 	else {
 		AfxMessageBox(L"Lỗi: Không tìm thấy Module Fingerprint! (.dll file)");
 	}
+	// add start register auth state observer NTTai 20260211
+	AuthStateManager::GetInstance()->RegisterObserver(this);
+	AuthStateManager::GetInstance()->Reset();
+	// add end register auth state observer NTTai 20260211
     return TRUE;
 }
 
@@ -123,15 +128,21 @@ void AuthFingerDlg::OnPaint()
 	// add start draw UI components to the memory buffer NTTai 20260106
 	CHeaderUI::DrawSharedHeader(&memDC, rect); //draw the shared Header(Logo, Agribank, Clock)
 	int cx = rect.Width() / 2;
-	int cy = rect.Height() / 2 + 80;
-	DrawInstructions(g, cx, cy);
-	DrawPulseCircle(g, cx, cy);
-	DrawMainCircle(g, cx, cy);
-	DrawFingerIcon(g, cx, cy);
-	DrawStatusLabel(g, cx, cy);
-	CButtonUI::DrawCancelButton(g, cx, cy, m_rectCancelBtn);
+	int cy = rect.Height() / 2 + 60;
+	AuthState currentState = AuthStateManager::GetInstance()->GetState(); // add get current auth state NTTai 20260211
+	DrawInstructions(g, cx, cy, currentState);
+	DrawPulseCircle(g, cx, cy, currentState);
+	DrawMainCircle(g, cx, cy, currentState);
+	DrawFingerIcon(g, cx, cy, currentState);
+	DrawStatusLabel(g, cx, cy, currentState);
 	// add end draw UI components to the memory buffer NTTai 20260106
-
+	
+	// add start draw cancel button only in specific states NTTai 20260211
+	if (currentState == STATE_WAITING_SCAN || currentState == STATE_ERROR) {
+		CButtonUI::DrawCancelButton(g, cx, cy, m_rectCancelBtn);
+	}
+	// add end draw cancel button only in specific states NTTai 20260211
+	
 	// add start copy the entire buffer to the screen in one atomic operation NTTai 20260106
 	dc.BitBlt(0, 0, rect.Width(), rect.Height(), &memDC, 0, 0, SRCCOPY);
 	// add end copy the entire buffer to the screen in one atomic operation NTTai 20260106
@@ -181,30 +192,69 @@ void AuthFingerDlg::OnTimer(UINT_PTR nIDEvent)
 		InvalidateRect(&rInvalid, FALSE);
 	}
 	// add end set effect timer NTTai 20260106
+	
+	// add start handle SUCCESS and ERROR timers NTTai 20260211
+	else if (nIDEvent == 3) { // Success Timer
+		KillTimer(3);
+		EndDialog(IDOK);
+	}
+
+	else if (nIDEvent == 4) { // Error Timer
+		KillTimer(4);
+		AuthStateManager::GetInstance()->Reset();
+		if (m_pDevice) m_pDevice->StartScanning();
+	}
+	// add end handle SUCCESS and ERROR timers NTTai 20260211\
+
 	CDialogEx::OnTimer(nIDEvent);
 }
 
 // add start draw instruction title NTTai 20260106
-void AuthFingerDlg::DrawInstructions(Gdiplus::Graphics& g, int cx, int cy)
+void AuthFingerDlg::DrawInstructions(Gdiplus::Graphics& g, int cx, int cy, AuthState state)
 {
-	Gdiplus::SolidBrush blackBrush(Gdiplus::Color(255, 30, 30, 30));
+	// add start draw title and subtitle NTTai 20260203
 	Gdiplus::StringFormat format;
 	format.SetAlignment(Gdiplus::StringAlignmentCenter);
 
 	Gdiplus::Font fontTitle(L"Segoe UI", 32, Gdiplus::FontStyleBold);
-	g.DrawString(L"Vui lòng đặt vân tay của bạn", -1, &fontTitle,
-		Gdiplus::PointF((float)cx, (float)cy - 300), &format, &blackBrush);
+	Gdiplus::SolidBrush blackTitleBrush(Gdiplus::Color(255, 0, 0, 0));
 
-	Gdiplus::Font fontSub(L"Segoe UI", 13, Gdiplus::FontStyleRegular);
-	Gdiplus::SolidBrush grayBrush(Gdiplus::Color(255, 120, 120, 120));
-	g.DrawString(L"Hệ thống đang quét... Giữ ngón tay ổn định.", -1, &fontSub,
-		Gdiplus::PointF((float)cx, (float)cy - 200), &format, &grayBrush);
+	Gdiplus::Font fontSub(L"Segoe UI", 14, Gdiplus::FontStyleRegular);
+	Gdiplus::SolidBrush subBrush(Gdiplus::Color(255, 80, 80, 80));
+
+	CString strTitle;
+	CString strSub;
+
+	if (m_bRegisterMode)
+	{
+		strTitle = L"Đăng ký vân tay mới";
+	}
+	else
+	{
+		strTitle = L"Xác thực vân tay";
+	}
+	// add start set subtitle based on state NTTai 20260203
+	if (state == STATE_ERROR) {
+		strSub = L"Không nhận diện được, vui lòng thử lại";
+	}
+	else if (state == STATE_SUCCESS) {
+		strSub = L"Hoàn tất!";
+	}
+	else {
+		strSub = L"Vui lòng đặt ngón tay để hệ thống ghi nhận mẫu vân tay";
+	}
+	// add end set subtitle based on state NTTai 20260203
+	g.DrawString(strTitle, -1, &fontTitle, Gdiplus::PointF((float)cx, (float)cy - 350), &format, &blackTitleBrush);
+	g.DrawString(strSub, -1, &fontSub, Gdiplus::PointF((float)cx, (float)cy - 240), &format, &subBrush);
+	// add end draw title and subtitle NTTai 20260203
 }
 // add end draw instruction title NTTai 20260106
 
 // add start draw pulse animation circle NTTai 20260106
-void AuthFingerDlg::DrawPulseCircle(Gdiplus::Graphics& g, int cx, int cy)
+void AuthFingerDlg::DrawPulseCircle(Gdiplus::Graphics& g, int cx, int cy, AuthState state	)
 {
+	if (state != STATE_WAITING_SCAN && state != STATE_SCANNING) return; // add only draw pulse in waiting and scanning states
+
 	Gdiplus::SolidBrush pulseBrush(Gdiplus::Color((int)m_fPulseAlpha, 162, 32, 45));
 	int size = 280; 
 	g.FillEllipse(&pulseBrush, cx - size / 2, cy - size / 2, size, size);
@@ -212,18 +262,27 @@ void AuthFingerDlg::DrawPulseCircle(Gdiplus::Graphics& g, int cx, int cy)
 // add end draw pulse animation circle NTTai 20260106
 
 // add start draw main white circle NTTai 20260106
-void AuthFingerDlg::DrawMainCircle(Gdiplus::Graphics& g, int cx, int cy)
+void AuthFingerDlg::DrawMainCircle(Gdiplus::Graphics& g, int cx, int cy, AuthState state)
 {
 	int size = 200;
 	Gdiplus::SolidBrush whiteBrush(Gdiplus::Color::White);
 	g.FillEllipse(&whiteBrush, cx - size / 2, cy - size / 2, size, size);
-	Gdiplus::Pen penBorder(Gdiplus::Color(255, 162, 32, 45), 2.0f);
+	// add start draw border color based on state NTTai 20260211
+	Gdiplus::Color borderColor;
+	switch (state) {
+		case STATE_SUCCESS: borderColor = Gdiplus::Color(255, 40, 167, 69); break; // Success Green 
+		case STATE_ERROR:   borderColor = Gdiplus::Color(255, 220, 53, 69); break; // Error Red
+		case STATE_VERIFYING: borderColor = Gdiplus::Color(255, 0, 120, 215); break; // Verifying Blue
+		default:            borderColor = Gdiplus::Color(255, 162, 32, 45); break; // Default Red
+	}
+	// add end draw border color based on state NTTai 20260211
+	Gdiplus::Pen penBorder(borderColor, 4.0f);
 	g.DrawEllipse(&penBorder, cx - size / 2, cy - size / 2, size, size);
 }
 // add end draw main white circle NTTai 20260106
 
 // add start draw fingerprint icon NTTai 20260106
-void AuthFingerDlg::DrawFingerIcon(Gdiplus::Graphics& g, int cx, int cy)
+void AuthFingerDlg::DrawFingerIcon(Gdiplus::Graphics& g, int cx, int cy, AuthState state)
 {
 	if (!m_pIconFinger) return;
 
@@ -261,21 +320,45 @@ void AuthFingerDlg::DrawFingerIcon(Gdiplus::Graphics& g, int cx, int cy)
 // add end draw fingerprint icon NTTai 20260106
 
 // add start draw status label NTTai 20260106
-void AuthFingerDlg::DrawStatusLabel(Gdiplus::Graphics& g, int cx, int cy)
-{
+void AuthFingerDlg::DrawStatusLabel(Gdiplus::Graphics& g, int cx, int cy, AuthState state)
+{	
 	Gdiplus::RectF rectLabel((float)cx - 220, (float)cy + 180, 440.0f, 60.0f);
 	Gdiplus::GraphicsPath path;
 	CButtonUI::AddRoundedRectToPath(path, rectLabel, 30.0f);
 
 	g.FillPath(&Gdiplus::SolidBrush(Gdiplus::Color::White), &path);
-
-	Gdiplus::Font fontStatus(L"Segoe UI", 12, Gdiplus::FontStyleBold);
+	// add start fix status text and color NTTai 20260211
+	Gdiplus::Color textColor;
+	CString strStatus;
+	switch (state) {
+	case STATE_WAITING_SCAN:
+		textColor = Gdiplus::Color(255, 162, 32, 45); // Red Agribank
+		strStatus = L"Đang chờ lấy mẫu vân tay...";
+		break;
+	case STATE_SCANNING:
+		textColor = Gdiplus::Color(255, 255, 140, 0); // Organge
+		strStatus = L"Đang quét vân tay...";
+		break;
+	case STATE_VERIFYING:
+		textColor = Gdiplus::Color(255, 0, 100, 200); // Blue
+		strStatus = L"Đang kiểm tra dữ liệu...";
+		break;
+	case STATE_SUCCESS:
+		textColor = Gdiplus::Color(255, 40, 167, 69); // Green
+		strStatus = L"Xác thực thành công!";
+		break;
+	case STATE_ERROR:
+		textColor = Gdiplus::Color(255, 220, 53, 69); // Red
+		strStatus = AuthStateManager::GetInstance()->GetErrorMessage();
+		if (strStatus.IsEmpty()) strStatus = L"Lỗi xác thực!";
+		break;
+	}
+	Gdiplus::Font fontStatus(L"Segoe UI", 14, Gdiplus::FontStyleBold);
 	Gdiplus::StringFormat format;
 	format.SetAlignment(Gdiplus::StringAlignmentCenter);
 	format.SetLineAlignment(Gdiplus::StringAlignmentCenter);
-
-	g.DrawString(L"Đặt ngón tay lên cảm biến để xác thực", -1, &fontStatus,
-		rectLabel, &format, &Gdiplus::SolidBrush(Gdiplus::Color(255, 162, 32, 45)));
+	g.DrawString(strStatus, -1, &fontStatus, rectLabel, &format, &Gdiplus::SolidBrush(textColor));
+	// add end fix status text and color NTTai 20260211
 }
 // add end draw status label NTTai 20260106
 
@@ -299,6 +382,7 @@ void AuthFingerDlg::OnDestroy() {
 		delete m_pDevice;
 		m_pDevice = nullptr;
 	}
+	AuthStateManager::GetInstance()->UnregisterObserver(this); // add unregister auth state observer NTTai 20260211
 	CDialogEx::OnDestroy();
 }
 // add end handle clean up resources NTTai 20260131
@@ -309,20 +393,32 @@ LRESULT AuthFingerDlg::OnScanComplete(WPARAM wParam, LPARAM lParam)
 	if (wParam == 1) {
 		CitizenCardData* pData = (CitizenCardData*)lParam;
 		if (pData) {
+			AuthStateManager::GetInstance()->SetState(STATE_VERIFYING); // add set state to verifying NTTai 20260211
+
 			DatabaseManager db;
 			bool bIsNew = false;
+			bool bSaveOK = false; // add save customer data to database NTTai 20260211
 
 			if (db.InitializeDB()) {
 				if (!db.IsCustomerExist(pData->strIDNumber)) bIsNew = true;
-				db.SaveCustomer(*pData);
+				bSaveOK = db.SaveCustomer(*pData); // add save customer data to database NTTai 20260211
 				db.CloseDB();
 			}
-
-			AuthCorrect dlgCorrect(pData->strFullName, bIsNew, this);
-			dlgCorrect.SetAuthData(*pData);
-			dlgCorrect.DoModal();
-
-			EndDialog(IDOK); 
+			// add start show success or error dialog NTTai 20260211
+			if (bSaveOK) {
+				AuthStateManager::GetInstance()->SetState(STATE_SUCCESS); // add set state to success NTTai 20260211
+				SetTimer(3, 500, NULL); // add delay before showing success dialog NTTai 20260211
+				// add start show correct dialog NTTai 20260211
+				AuthCorrect dlgCorrect(pData->strFullName, bIsNew, this);
+				dlgCorrect.SetAuthData(*pData);
+				dlgCorrect.DoModal();
+				// add end show correct dialog NTTai 20260211
+				EndDialog(IDOK);
+			}
+			else {
+				AuthStateManager::GetInstance()->SetState(STATE_ERROR, L"Lỗi lưu dữ liệu!"); // add set state to error NTTai 20260211
+			}
+			// add end show success or error dialog NTTai 20260211
 			delete pData;
 		}
 	}
@@ -332,6 +428,7 @@ LRESULT AuthFingerDlg::OnScanComplete(WPARAM wParam, LPARAM lParam)
 			? *pStrError
 			: L"Lỗi nhận diện: Không thể xác thực vân tay. Vui lòng thử lại.";
 
+		AuthStateManager::GetInstance()->SetState(STATE_ERROR, strMsg); // add set state to error NTTai 20260211
 		AfxMessageBox(strMsg, MB_ICONERROR);
 
 		if (pStrError) delete pStrError;
@@ -359,3 +456,27 @@ void AuthFingerDlg::OnScanError(CString strError) {
 	PostMessage(WM_USER_FINGER_SCAN_COMPLETE, (WPARAM)0, (LPARAM)pErrStr);
 }
 // add end implement IDeviceListener interface (Worker Thread) NTTai 20260131
+
+// add implement auth state observer NTTai 20260211
+void AuthFingerDlg::OnAuthStateChanged(AuthState newState, CString strMessage)
+{
+	KillTimer(3);
+	KillTimer(4);
+
+	switch (newState)
+	{
+	case STATE_WAITING_SCAN:
+		m_fPulseAlpha = 50.0f;
+		SetTimer(2, 40, NULL);
+		break;
+
+	case STATE_SUCCESS:
+		break;
+
+	case STATE_ERROR:
+		SetTimer(4, 3000, NULL);
+		break;
+	}
+	Invalidate(FALSE);
+}
+// add end implement auth state observer NTTai 20260211
